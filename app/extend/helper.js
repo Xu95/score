@@ -1,3 +1,5 @@
+const ldap = require('ldapjs');
+
 module.exports = {
   userValue(params) {
     return `{"name":"${params.name}","class":"${params.class}"}`;
@@ -17,5 +19,19 @@ module.exports = {
         a[p] = b[p];
     }
     return a;
+  },
+  ldapsearch(client, opts) {
+    return new Promise((resolve, reject) => {
+      client.search('ou=people,dc=gao,dc=com', opts, function (err, res) {
+        resolve(res);
+      })
+    })
+  },
+  ldapbind(client, dnstring, password) {
+    return new Promise((resolve, reject) => {
+      client.bind(dnstring, password, function (err) {
+        resolve(err);
+      })
+    })
   },
 };
