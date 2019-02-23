@@ -13,11 +13,9 @@ class UserController extends Controller {
     try {
       const permmit = await this.service.user.login(params);
       if (!permmit) return this.ctx.render('error.html');
-      this.ctx.session.username = permmit.data;//id 是字符
       userpage = await readF(Path.resolve(__dirname, '../view/index.html'));
     } catch (e) {
-      console.log(new Error("from UserController/login"));
-      userpage = await readF(Path.resolve(__dirname, '../view/error.html'));
+      this.ctx.helper.erroDeal();
     }
     this.ctx.response.type = 'html';
     this.ctx.body = userpage;
@@ -28,10 +26,7 @@ class UserController extends Controller {
     try {
       await this.ctx.render('index.html');
     } catch (e) {
-      console.log(new Error("from UserController/logout"));
-      let userpage = await readF(Path.resolve(__dirname, '../view/error.html'));
-      this.ctx.response.type = 'html';
-      this.ctx.body = userpage;
+      this.ctx.helper.erroDeal();
     }
   }
 }

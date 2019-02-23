@@ -2,7 +2,12 @@ exports.num = {
   /*
   状态码
    */
-  'LOGIN_SUCCESS': 201,//登陆成功
+  'NO_USE': 200,//初始状态
+  'NO_DATA_SUCCESS': 201,//有数据返回
+  'DATA_SUCCESS': 202,//无数据返回
+  'NO_DATA_ERROR': 301,//数据不存在
+  'PARAM_ERROR': 302,//参数错误
+  'AUTH_ERROR': 303,//权限错误
 };
 exports.globalConst = {
   /*
@@ -13,11 +18,10 @@ exports.globalConst = {
   /*
   任务类型
    */
-  1: '分析',
-  2: '设计',
-  3: '开发',
-  4: '测试',
-  5: '运维',
-  6: '支持',
-  7: '培训',
+  tasktype: ['分析', '设计', '开发', '测试', '运维', '支持', '培训',],
+  /*
+  审计相关
+   */
+  auditName: '大锤1',
+  auditId: '1',
 };

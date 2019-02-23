@@ -1,17 +1,21 @@
-const ldap = require('ldapjs');
+//const ldap = require('ldapjs');
+const Fs = require('fs');
+const Path = require('path');
+const util = require('util');
+const readF = util.promisify(Fs.readFile);
 
 module.exports = {
   userValue(params) {
-    return `{"name":"${params.name}","class":"${params.class}"}`;
+    return `{"username":"${params.user_name}","class":"${params.class}"}`;
   },
   taskValue(params) {
-    return `{"name":"${params.name}","userid":"${params.user_id}","time":"${params.time}","score":"${params.score}"}`;
+    return `{"taskname":"${params.task_name}","userid":"${params.user_id}","time":"${params.time}","score":"${params.score}"}`;
   },
   resultValue(params) {
-    return `{"name":"${params.name}","detail":"${params.detail}","refer":"${params.refer}","resultid":"${params.result_id}"}`;
+    return `{"resultname":"${params.result_name}","resultdetail":"${params.result_detail}","refer":"${params.refer}","resultid":"${params.result_id}"}`;
   },
   timeValue(params) {
-    return `{"hour":"${params.hour}","typeid":"${params.type_id}","detail":"${params.detail}","timeid":"${params.time_id}"}`;
+    return `{"hour":"${params.hour}","typeid":"${params.type_id}","timedetail":"${params.time_detail}","timeid":"${params.time_id}"}`;
   },
   objExtend(a, b) {
     for (let p in b) {
@@ -33,5 +37,11 @@ module.exports = {
         resolve(err);
       })
     })
+  },
+  async erroDeal(){
+    console.log(new Error(`from TaskController/timeSearch and the erro is ${e}`));
+    let userpage = await readF(Path.resolve(__dirname, '../view/error.html'));
+    this.ctx.response.type = 'html';
+    this.ctx.body = userpage;
   },
 };

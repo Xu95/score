@@ -6,22 +6,37 @@ const ldap = require('ldapjs');
 class UserService extends Service {
   async login(params) {
     const result = {
-      status: null,
+      status: this.config.number.NO_USE,
       data: {}
     };
-    let permmit;
-    try {
-      permmit = await this.userauth(params.username, params.password);
-      //r = await this.app.redis.hget('user', id);
-      console.log(permmit);
-    } catch (e) {
-      console.log(new Error(e));
-    }
+    let permmit = await this.userauth(params.username, params.password);
+    //r = await this.app.redis.hget('user', id);
+    //console.log(permmit);
     if (permmit === 1) {
+      let r;
+      r = await this.app.redis.hgetall('user');
+      //console.log(r);
+      for (let a in r) {
+        let b = JSON.parse(r[a].replace(/'/g, '"'));
+        if (b.name === params.username) {
+          this.ctx.session.userid = a;
+          this.ctx.session.username = b.name;
+          this.ctx.session.class = b.class;
+        }
+      }
+      if (!this.ctx.session.username) {
+        let len = await this.app.redis.hlen('user');
+        let r1 = await this.app.redis.hset('user',`${len+1}`,`${this.ctx.helper.userValue({user_name:params.username,class:'0'})}`);
+        if(r1 === 1){
+          this.ctx.session.userid = len+1;
+          this.ctx.session.username = params.username;
+          this.ctx.session.class = '0';
+        }
+      }
       //r = JSON.parse(r.replace(/'/g, '"'));
-      result.status = this.config.number.LOGIN_SUCCESS;
-      result.data = {username:params.username};
-      console.log(result);
+      result.status = this.config.number.DATA_SUCCESS;
+      result.data = {username: params.username};
+      //console.log(result);
       return result;
     } else {
       return false;
@@ -31,9 +46,9 @@ class UserService extends Service {
   async logout(id) {
   }
 
-  async userauth(username, password, next) {
-    console.log(username);
-    console.log(password);
+  async userauth(username, password) {
+    //console.log(username);
+    //console.log(password);
 
     const client = ldap.createClient({
       url: 'ldap:172.20.12.2:389'
