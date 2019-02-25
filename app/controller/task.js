@@ -10,7 +10,8 @@ class TaskController extends Controller {
     try {
       r = await this.service.task.list(page);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'TaskController/list');
+      return
     }
     if (r.length === 0 && Array.isArray(r)) {
       this.result.status = this.config.number.NO_DATA_ERROR;
@@ -30,7 +31,8 @@ class TaskController extends Controller {
     try {
       r = await this.service.task.timeSearch(startTime, endTime, page);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'TaskController/timeSearch');
+      return
     }
     if (r) {
       this.result.status = this.config.number.DATA_SUCCESS;
@@ -50,7 +52,8 @@ class TaskController extends Controller {
     try {
       r = await this.service.task.detail(taskId);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'TaskController/detail');
+      return
     }
     if (r) {
       this.result.status = this.config.number.DATA_SUCCESS;
@@ -70,7 +73,8 @@ class TaskController extends Controller {
     try {
       r = await this.service.task.increase(param);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'TaskController/increase');
+      return
     }
     if (r) {
       this.result.status = this.config.number.DATA_SUCCESS;
@@ -94,7 +98,8 @@ class TaskController extends Controller {
     try {
       r = await this.service.task.edit(param);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'TaskController/edit');
+      return
     }
     if (r) {
       this.result.status = this.config.number.NO_DATA_SUCCESS;

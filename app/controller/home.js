@@ -9,7 +9,12 @@ const readF = util.promisify(Fs.readFile);
 class HomeController extends Controller {
   async index() {
     let userpage;
-    userpage = await readF(Path.resolve(__dirname, '../view/index.html'));
+    try {
+      userpage = await readF(Path.resolve(__dirname, '../view/index.html'));
+    } catch (e) {
+      this.ctx.helper.erroDeal(e, 'HomeController/index');
+      return
+    }
     //await this.ctx.render('index.html').catch(error => console.log(new Error("form HomeController/index")));
     this.ctx.response.type = 'html';
     this.ctx.body = userpage;

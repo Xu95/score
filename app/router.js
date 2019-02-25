@@ -7,7 +7,7 @@ module.exports = app => {
   const {router, controller} = app;
   router.get('/', controller.home.index);
 //user
-  router.post('/user/login/:id', controller.user.login);
+  router.post('/user/login/', controller.user.login);
   router.get('/user/logout', controller.user.logout);
 //task
   router.get('/task/list/:page', controller.task.list);

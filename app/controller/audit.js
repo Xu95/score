@@ -17,7 +17,8 @@ class AuditController extends Controller {
     try {
       r = await this.service.audit.score(params);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'AuditController/score');
+      return
     }
     if (r) {
       this.result.status = this.config.number.NO_DATA_SUCCESS;
@@ -44,7 +45,8 @@ class AuditController extends Controller {
     try {
       r = await this.service.audit.typeSearch(typeId, page);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'AuditController/typeSearch');
+      return
     }
     if (r) {
       this.result.status = this.config.number.DATA_SUCCESS;

@@ -13,9 +13,10 @@ class UserController extends Controller {
     try {
       const permmit = await this.service.user.login(params);
       if (!permmit) return this.ctx.render('error.html');
-      userpage = await readF(Path.resolve(__dirname, '../view/index.html'));
+      userpage = await readF(Path.resolve(__dirname, '../view/list.html'));
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'UserController/login');
+      return
     }
     this.ctx.response.type = 'html';
     this.ctx.body = userpage;
@@ -23,11 +24,15 @@ class UserController extends Controller {
 
   async logout() {
     this.ctx.session.userid = '';
+    let userpage;
     try {
-      await this.ctx.render('index.html');
+      userpage = await readF(Path.resolve(__dirname, '../view/index.html'));
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'UserController/logout');
+      return
     }
+    this.ctx.response.type = 'html';
+    this.ctx.body = userpage;
   }
 }
 

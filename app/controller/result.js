@@ -10,12 +10,13 @@ class ResultController extends Controller {
     try {
       r = await this.service.result.detail(taskId, resultId);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'ResultController/detail');
+      return
     }
     if (r) {
       this.result.status = this.config.number.DATA_SUCCESS;
       this.result.data = r;
-    }else{
+    } else {
       this.result.status = this.config.number.PARAM_ERROR;
       this.result.data = {};
     }
@@ -29,7 +30,8 @@ class ResultController extends Controller {
     try {
       await this.service.result.delete(taskId, resultId);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'ResultController/delete');
+      return
     }
     this.result.status = this.config.number.NO_DATA_SUCCESS;
     this.result.data = {};
@@ -43,12 +45,13 @@ class ResultController extends Controller {
     try {
       r = await this.service.result.edit(param);
     } catch (e) {
-      this.ctx.helper.erroDeal();
+      this.ctx.helper.erroDeal(e, 'ResultController/edit');
+      return
     }
     if (r) {
       this.result.status = this.config.number.NO_DATA_SUCCESS;
       this.result.data = {};
-    }else{
+    } else {
       this.result.status = this.config.number.PARAM_ERROR;
       this.result.data = {};
     }

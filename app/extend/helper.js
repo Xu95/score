@@ -38,9 +38,10 @@ module.exports = {
       })
     })
   },
-  async erroDeal(){
-    console.log(new Error(`from TaskController/timeSearch and the erro is ${e}`));
-    let userpage = await readF(Path.resolve(__dirname, '../view/error.html'));
+  async erroDeal(e,addr){
+    this.ctx.logger.error(new Error(`from ${addr} and the error is ${e}`));
+    //const userpage = await readF(Path.resolve(__dirname, '../view/error.html'));
+    const userpage = Fs.readFileSync(Path.resolve(__dirname, '../view/error.html'));
     this.ctx.response.type = 'html';
     this.ctx.body = userpage;
   },

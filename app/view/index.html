@@ -1,10 +1,141 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>用户登录</title>
+    <!-- <script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"> -->
+
+    <script type="text/javascript" src="../public/asset/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../public/asset/js/toastr.min.js"></script>
+    <script type="text/javascript" src="../public/asset/js/common.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../public/asset/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../public/asset/css/normalize.min.css">
+    <link rel="stylesheet" type="text/css" href="../public/asset/css/toastr.min.css">
+    <link href="https://cdn.demo.fastadmin.net/assets/img/favicon.ico">
+
+
 </head>
 <body>
-<h2>this is the login page；</h2>
+<div class="container">
+    <div class="login-wrapper">
+        <div class="login-screen">
+            <div class="well">
+                <div class="login-form">
+                    <img id="profile-img" class="profile-img-card" src="../public/asset/img/timg.jpg"/>
+                    <form id="login-form" class="nice-validator n-default n-bootstrap" novalidate="novalidate">
+                        <div id="errtips" class="hide msg-container"></div>
+                        <input type="hidden" name="__token__" value="cedc2a17be8fb706d55244632375126e"
+                               data-target="#errtips"/>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+                            </div>
+                            <input type="text" class="form-control" id="form-username" placeholder="用户名" name="username"
+                                   autocomplete="off" value="" data-target="#errtips"/>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-lock" aria-hidden="true"></span>
+                            </div>
+                            <input type="password" class="form-control" id="form-password" placeholder="密码"
+                                   name="password" autocomplete="off" value="" data-target="#errtips"/>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success btn-lg btn-block login" id="submit">登 录
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 </body>
+
+<style type="text/css">
+    body {
+        color: #999;
+        background: url('../public/asset/img/bg.jpg') no-repeat center center;
+        background-size: cover;
+        background-attachment: fixed;
+    }
+
+    a {
+        color: #fff;
+    }
+
+    .login-panel {
+        margin-top: 150px;
+    }
+
+    .login-screen {
+        max-width: 400px;
+        padding: 0;
+        margin: 100px auto 0 auto;
+
+    }
+
+    .login-screen .well {
+        border-radius: 3px;
+        -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .login-screen .copyright {
+        text-align: center;
+    }
+
+    @media (max-width: 767px) {
+        .login-screen {
+            padding: 0 20px;
+        }
+    }
+
+    .profile-img-card {
+        width: 100px;
+        height: 100px;
+        margin: 10px auto;
+        display: block;
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
+        border-radius: 50%;
+    }
+
+    .profile-name-card {
+        text-align: center;
+    }
+
+    #login-form {
+        margin-top: 20px;
+    }
+
+    #login-form .input-group {
+        margin-bottom: 15px;
+    }
+</style>
+
+<script type="text/javascript">
+  $(function () {
+    $("#submit").click(function (event) {
+      event.preventDefault();
+      $.ajax({
+        async : true,
+        dataType:"html",//返回整合HTML
+        // dataType: "json",//返回json格式设置
+        url: '/user/login',
+        type: 'post',
+        data: {
+          username: $("#form-username").val(),
+          password: $("#form-password").val()
+        }
+      }).then((res) => {
+        $("html").html(res)
+      })
+    })
+  })
+</script>
 </html>
