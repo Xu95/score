@@ -10,14 +10,15 @@ class HomeController extends Controller {
   async index() {
     let userpage;
     try {
-      userpage = await readF(Path.resolve(__dirname, '../view/index.html'));
+      //userpage = await readF(Path.resolve(__dirname, '../view/index.html'));
+      userpage = await this.ctx.render('index', {csrf: this.ctx.csrf,});
     } catch (e) {
       this.ctx.helper.erroDeal(e, 'HomeController/index');
       return
     }
     //await this.ctx.render('index.html').catch(error => console.log(new Error("form HomeController/index")));
-    this.ctx.response.type = 'html';
-    this.ctx.body = userpage;
+    //this.ctx.response.type = 'html';
+    //this.ctx.body = userpage;
   }
 }
 

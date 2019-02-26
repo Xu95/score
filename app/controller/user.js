@@ -8,6 +8,7 @@ const readF = util.promisify(Fs.readFile);
 
 class UserController extends Controller {
   async login() {
+    console.log(this.ctx.cookies.get('csrfToken'));
     let userpage;
     let params = this.ctx.request.body;//params-- / ; query-- ?
     try {

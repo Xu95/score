@@ -40,9 +40,15 @@ class ResultController extends Controller {
   }
 
   async edit() {
-    const param = this.ctx.request.body;
-    let r;
+    let r, param, stream;
     try {
+      stream = await this.ctx.getFileStreamWithoutFileNotFoundError();
+      if (!stream.filename) {
+        param = stream.fields;
+        param.refer = 'null';
+      } else {
+        param = await this.ctx.helper.upload(stream);
+      }
       r = await this.service.result.edit(param);
     } catch (e) {
       this.ctx.helper.erroDeal(e, 'ResultController/edit');
