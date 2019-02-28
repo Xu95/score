@@ -1,5 +1,6 @@
 'use strict';
 const CON = require("./config.const");
+const os = require("os");
 module.exports = appInfo => {
   const config = exports = {};
   config.number = CON.num;

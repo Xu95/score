@@ -8,6 +8,7 @@ exports.num = {
   'NO_DATA_ERROR': 301,//数据不存在
   'PARAM_ERROR': 302,//参数错误
   'AUTH_ERROR': 303,//权限错误
+  'EGG_ERROR' : 304,//系统错误
 };
 exports.globalConst = {
   /*

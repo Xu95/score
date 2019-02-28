@@ -4,27 +4,92 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<script type="text/javascript" src="../public/asset/js/jquery.min.js"></script>
 <body>
 <div style="height: 400px; border: 2px solid red; margin: 50px auto;">
-    <form id='f1' method="post" action="" enctype="multipart/form-data">
-        <input type="text" placeholder="用户名" name="username" value="" onclick="change()"/>
+    <form id='f1' method="post" action="/result/edit" enctype="multipart/form-data">
+        <input type="text" placeholder="用户名" id="username1" value=""/>
+        <input type="text" placeholder="用户名" id="username2" value=""/>
         <h2>文件上传</h2>
-        选择文件： <input type="file" name="file">
+        选择文件： <input type="file" id="file1">
+        <button style="display: block; margin-top: 30px;" onclick="change1(this)">完成</button>
+    </form>
+    <form id='f2' method="post" action="/result/edit" enctype="multipart/form-data">
+        <input type="text" placeholder="用户名" id="username3" value=""/>
+        <input type="text" placeholder="用户名" id="username4" value=""/>
+        <h2>文件上传</h2>
+        选择文件： <input type="file" id="file2">
+        <button style="display: block; margin-top: 30px;" onclick="change1(this)">完成</button>
         <button style="display: block; margin-top: 30px;" onclick="change()">提交</button>
     </form>
 </div>
 </body>
 <script>
-function change() {
+  const arr = [];
+
+  function change() {
     event.preventDefault();
-    let r1 = document.cookie.split(';');
-    let crsf = null;
-    for (let a of r1) {
-      let r2 = a.split('=');
-      if (r2[0] === 'csrfToken') crsf = r2[1];
+    for (let a of arr) {
+      console.log(a);
+      if (a.hasOwnProperty('refer')) {
+        console.log(" has refer");
+        post2(a).then((res) => {
+          console.log(res);
+        })
+      } else {
+        console.log(" no refer");
+        post(a).then((res) => {
+          console.log(res);
+        })
+      }
     }
-    console.log("1");
-    document.getElementById('f1').action = '/result/edit?_csrf='+crsf;
+  }
+
+  function post(data) {
+    console.log("jjbb");
+    return $.ajax({
+      async: true,
+      contentType: false,
+      processData: false,
+      // dataType: "html",//返回整合HTML
+      // dataType: "json",//返回json格式设置
+      url: '/result/edit',
+      type: 'post',
+      data: data,
+    })
+  }
+
+  function post2(data) {
+    console.log("jjbb");
+    return $.ajax({
+      async: true,
+      //contentType: 'multipart/form-data',
+      //processData: false,
+      // dataType: "html",//返回整合HTML
+      // dataType: "json",//返回json格式设置
+      url: '/result/edit',
+      type: 'post',
+      data: data,
+    })
+  }
+
+  function change1(e) {
+    event.preventDefault();
+    let formData;
+    if (e.previousElementSibling.value) {
+      formData = new FormData();
+      formData.append("myfile1", document.getElementById("file1").files[0]);
+      formData.append('username1', $("#username1").val());
+      formData.append('username2', $("#username2").val());
+    } else {
+      formData = {
+        username1: $("#username1").val(),
+        username2: $("#username2").val(),
+        refer: 'null'
+      }
+    }
+    arr.push(formData);
+    return true;
   }
 </script>
 </html>
