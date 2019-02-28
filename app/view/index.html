@@ -25,9 +25,6 @@
                 <div class="login-form">
                     <img id="profile-img" class="profile-img-card" src="../public/asset/img/timg.jpg"/>
                     <form id="login-form" class="nice-validator n-default n-bootstrap" novalidate="novalidate">
-                        <div id="errtips" class="hide msg-container"></div>
-                        <input type="hidden" name="__token__" value="cedc2a17be8fb706d55244632375126e"
-                               data-target="#errtips"/>
                         <div class="input-group">
                             <div class="input-group-addon">
                                 <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
@@ -130,10 +127,11 @@
         type: 'post',
         data: {
           username: $("#form-username").val(),
-          password: $("#form-password").val()
+          password: $("#form-password").val(),
+          _csrf:"<%= csrf%>",
         }
       }).then((res) => {
-        $("html").html(res)
+        document.write(res);
       })
     })
   })

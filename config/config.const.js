@@ -24,4 +24,8 @@ exports.globalConst = {
    */
   auditName: '大锤1',
   auditId: '1',
+  /*
+  上传文件路径
+   */
+  uploadPath: 'app/public/upload/',
 };

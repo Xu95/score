@@ -41,7 +41,7 @@ class TaskService extends Service {
     for (let a of len) {
       if (a.substr(0, 1) === taskId) filed.push(a);
     }
-    if(filed.length === 0) return false;
+    if(filed.length === 0) return result;
     let [r1, r2] = await Promise.all([redis.hmget('result', filed), redis.hmget('time', filed)]);
     if (r1.length !== r2.length) throw "form /service/task/detail.result table can not match time table";
     for (let i = 0; i < r1.length; i++) {

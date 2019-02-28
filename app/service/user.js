@@ -11,7 +11,7 @@ class UserService extends Service {
     };
     let permmit = await this.userauth(params.username, params.password);
     //r = await this.app.redis.hget('user', id);
-    //console.log(permmit);
+    console.log(permmit);
     if (permmit === 1) {
       let r;
       r = await this.app.redis.hgetall('user');

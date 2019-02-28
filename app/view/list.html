@@ -5,6 +5,26 @@
     <title>Title</title>
 </head>
 <body>
-this is list page
+<div style="height: 400px; border: 2px solid red; margin: 50px auto;">
+    <form id='f1' method="post" action="" enctype="multipart/form-data">
+        <input type="text" placeholder="用户名" name="username" value="" onclick="change()"/>
+        <h2>文件上传</h2>
+        选择文件： <input type="file" name="file">
+        <button style="display: block; margin-top: 30px;" onclick="change()">提交</button>
+    </form>
+</div>
 </body>
+<script>
+function change() {
+    event.preventDefault();
+    let r1 = document.cookie.split(';');
+    let crsf = null;
+    for (let a of r1) {
+      let r2 = a.split('=');
+      if (r2[0] === 'csrfToken') crsf = r2[1];
+    }
+    console.log("1");
+    document.getElementById('f1').action = '/result/edit?_csrf='+crsf;
+  }
+</script>
 </html>
