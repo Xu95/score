@@ -15,7 +15,7 @@ module.exports = app => {
   router.get('/task/detail/:task_id', controller.task.detail);
   router.post('/task/increase', controller.task.increase);
   router.post('/task/edit', controller.task.edit);
-//resul
+//result
   router.get('/result/detail/:task_id/:result_id', controller.result.detail);
   router.post('/result/edit', controller.result.edit);
   router.get('/result/delete/:task_id/:result_id', controller.result.delete);
