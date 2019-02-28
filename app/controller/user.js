@@ -11,6 +11,7 @@ class UserController extends Controller {
     console.log(this.ctx.cookies.get('csrfToken'));
     let userpage;
     let params = this.ctx.request.body;//params-- / ; query-- ?
+    console.log(params);
     try {
       const permmit = await this.service.user.login(params);
       if (!permmit) return this.ctx.render('error.html');
@@ -19,8 +20,13 @@ class UserController extends Controller {
       this.ctx.helper.erroDeal(e, 'UserController/login');
       return
     }
-    this.ctx.response.type = 'html';
-    this.ctx.body = userpage;
+    //this.ctx.response.type = 'html';
+    //this.ctx.body = userpage;
+    console.log("ok");
+    this.ctx.body = {
+      status: this.config.number.DATA_SUCCESS,
+      data: {},
+    }
   }
 
   async logout() {
