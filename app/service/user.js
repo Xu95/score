@@ -18,17 +18,21 @@ class UserService extends Service {
       //console.log(r);
       for (let a in r) {
         let b = JSON.parse(r[a].replace(/'/g, '"'));
-        if (b.name === params.username) {
+        if (b.username === params.username) {
           this.ctx.session.userid = a;
-          this.ctx.session.username = b.name;
+          this.ctx.session.username = b.username;
           this.ctx.session.class = b.class;
+          break;
         }
       }
       if (!this.ctx.session.username) {
         let len = await this.app.redis.hlen('user');
-        let r1 = await this.app.redis.hset('user',`${len+1}`,`${this.ctx.helper.userValue({user_name:params.username,class:'0'})}`);
-        if(r1 === 1){
-          this.ctx.session.userid = len+1;
+        let r1 = await this.app.redis.hset('user', `${len + 1}`, `${this.ctx.helper.userValue({
+          user_name: params.username,
+          class: '0'
+        })}`);
+        if (r1 === 1) {
+          this.ctx.session.userid = len + 1;
           this.ctx.session.username = params.username;
           this.ctx.session.class = '0';
         }
