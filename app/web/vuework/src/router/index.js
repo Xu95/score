@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import Audit from '@/components/Audit'
 import TaskList from '@/components/TaskList'
+import AddTask from '@/components/AddTask'
 import error from '@/components/error'
 
 Vue.use(Router)
@@ -24,7 +25,7 @@ export default new Router({
       path: '/audit',
       name: 'Audit',
       component: Audit,
-      meta:{ 
+      meta: {
         requireAuth: true
       }
     },
@@ -32,7 +33,15 @@ export default new Router({
       path: '/tasklist',
       name: 'TaskList',
       component: TaskList,
-      meta:{ 
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/addTask',
+      name: 'AddTask',
+      component: AddTask,
+      meta: {
         requireAuth: true
       }
     },

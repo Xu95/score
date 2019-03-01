@@ -15,7 +15,7 @@ class TaskService extends Service {
           aa.task_id = a;
           result.push(aa);
         }
-      }else{
+      } else {
         let res = await this.app.redis.hget('user', `${aa.userid}`);
         console.log(res);
         aa.applicant_name = JSON.parse(res.replace(/'/g, '"')).username;
@@ -44,20 +44,25 @@ class TaskService extends Service {
     return result;
   }*/
 
-  async timeSearch(startTime, endTime, page) {
-    let start = (page - 1) * this.config.globalConst.PAGE_NUMBER + 1;
+  async timeSearch(startTime, endTime) {
+    //let start = (page - 1) * this.config.globalConst.PAGE_NUMBER + 1;
     let result = [];
     let r = await this.app.redis.hgetall('task');
     if (r.length === 0) return result;
     for (let a in r) {
       let b = JSON.parse(r[a].replace(/'/g, '"'));
+      let res = await this.app.redis.hget('user', `${b.userid}`);
+      b.applicant_name = JSON.parse(res.replace(/'/g, '"')).username;
+      b.task_id = a;
       if (startTime <= b.time && b.time <= endTime) {
+        console.log(b.time);
         result.push(b);
       }
     }
     //console.log(result);
     if (result.length === 0) return false;
-    return result.slice(start - 1, start + this.config.globalConst.PAGE_NUMBER - 1);
+    //return result.slice(start - 1, start + this.config.globalConst.PAGE_NUMBER - 1);
+    return result;
   }
 
   async detail(taskId) {
@@ -107,5 +112,6 @@ class TaskService extends Service {
   }
 }
 
-module.exports = TaskService;
+module
+  .exports = TaskService;
 

@@ -26,10 +26,10 @@ class TaskController extends Controller {
 
   async timeSearch() {
     if (this.ctx.session.username === this.config.globalConst.auditName) this.result.data.roles = 1;
-    const [startTime, endTime, page] = this.ctx.params;
+    const {start_time, end_time} = this.ctx.params;
     let r;
     try {
-      r = await this.service.task.timeSearch(startTime, endTime, page);
+      r = await this.service.task.timeSearch(start_time, end_time);
     } catch (e) {
       this.ctx.helper.erroDeal(e, 'TaskController/timeSearch');
       return
@@ -48,6 +48,7 @@ class TaskController extends Controller {
   async detail() {
     if (this.ctx.session.username === this.config.globalConst.auditName) this.result.data.roles = 1;
     const taskId = this.ctx.params.task_id;
+    console.log(this.ctx.params);
     let r;
     try {
       r = await this.service.task.detail(taskId);

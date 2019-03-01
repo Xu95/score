@@ -33,13 +33,13 @@
                 <el-table :data="taskdata" :default-sort="{prop: 'taskID', order: 'descending'}">
                     <el-table-column prop="id" label="编号" width="80%" sortable>
                     </el-table-column>
-                    <el-table-column prop="detail.task_name" label="任务名称" width="320%" sortable>
+                    <el-table-column prop="detail.taskname" label="任务名称" width="320%" sortable>
                     </el-table-column>
                     <el-table-column prop="detail.applicant_name" label="申请人" width="130%" sortable>
                     </el-table-column>
                     <el-table-column prop="detail.time" label="启动时间" width="150%" sortable>
                     </el-table-column>
-                    <el-table-column prop="detail.score" label="评分" width="100%">
+                    <el-table-column prop="detail.score" label="评分" width="100%" :formatter="changescore">
                     </el-table-column>
                     <el-table-column property="status" label="功能区" width="160%">
                         <template slot-scope="scope">
@@ -64,7 +64,9 @@
                                         value-format="yyyy-MM-dd"></el-date-picker>
                     </div>
                     <br/>
-                    <el-button icon="el-icon-search" type="primary" style="width:220px">查询</el-button>
+                    <el-button icon="el-icon-search" type="primary" style="width:220px"
+                               @click=typeSearch(timedata1,timedata2)>查询
+                    </el-button>
                 </div>
             </el-col>
         </el-container>
@@ -72,15 +74,15 @@
         <!-- 查看任务详情 如果当前登录人员是任务的发布者可以对任务进行编辑 -->
         <el-dialog title="任务详情" :visible.sync="dialogVisible1" :before-close="close" width="30%">
     <span>
-        <strong>任务名：</strong>{{ dialogdata.task_name }}<br/>
-        <strong>申请人：&nbsp;</strong>{{ dialogdata.applicant_name }} &nbsp;&nbsp; <strong>启动时间：&nbsp; </strong>{{ dialogdata.task_time }}
+        <strong>任务名：</strong>{{ dialogdata.taskname }}<br/>
+        <strong>申请人：&nbsp;</strong>{{ dialogdata.applicant_name}} &nbsp;&nbsp; <strong>启动时间：&nbsp; </strong>{{ dialogdata.time }}
     </span>
             <hr/>
             <el-row>
                 <el-col :span="12">
                     <div class="grid-content bg-purple">
                         <el-table :data="taskdetail">
-                            <el-table-column label="成果详情" width="200px" prop="detail" align="center">
+                            <el-table-column label="成果详情" width="200px" prop="detail.result_detail" align="center">
                             </el-table-column>
                         </el-table>
                     </div>
@@ -88,7 +90,7 @@
                 <el-col :span="12">
                     <div class="grid-content bg-purple">
                         <el-table :data="taskdetail">
-                            <el-table-column label="工作时间" width="200px" prop="refer" align="center">
+                            <el-table-column label="工作时间" width="200px" prop="detail.time_detail" align="center">
                             </el-table-column>
                         </el-table>
                     </div>
@@ -199,12 +201,11 @@
     },
     methods: {
       taskedit() {
-        if (this.disables == false) {
+        if (this.disables === false) {
           this.$router.replace('/audit');
         } else {
           this.$message.error('当前用户没有操作权限');
         }
-
       },
 
       logout() {
@@ -218,17 +219,16 @@
         done();
       },
       showDetail(row) {
-        console.log(row);
-        this.dialogdata = row;
-        this.taskId = row.task_id;
-        let url = '/api/task/detail/' + row.detail.task_id;
-        console.log(url);
+        //console.log(row);
+        this.dialogdata = row.detail;
+        //console.log(this.dialogdata);
+        this.taskId = row.detail.task_id;
         this.dialogVisible1 = true;
         this.$axios({
           url: '/api/task/detail/' + this.taskId,
           method: 'get',
         }).then((res) => {
-          console.log(res.data);
+          //console.log(res.data);
           const result = res.data.data.results;
           for (let i in result) {
             this.taskdetail.push({id: i, detail: result[i]});
@@ -236,11 +236,37 @@
         }, (err) => {
           console.log(err);
         });
-        console.log(this.taskdetail)
+        //console.log(this.taskdetail)
       },
       addTask() {
-        this.dialogVisible2 = true
-
+        //this.dialogVisible2 = true;
+        this.$router.replace('/addTask');
+      },
+      typeSearch(t1, t2) {
+        let url = '/api/task/timeSearch/' + t1 + '/' + t2;
+        console.log(url);
+        this.$axios({
+          url: '/api/task/timeSearch/' + t1 + '/' + t2,
+          method: 'get',
+        }).then((res) => {
+          //console.log(res.data);
+          this.taskdata = [];
+          const result = res.data.data.results;
+          for (let i in result) {
+            this.taskdata.push({id: i, detail: result[i]});
+          }
+          console.log(this.taskdata);
+        }, (err) => {
+          console.log(err);
+        });
+      },
+      changescore: function (row) {
+        let name = row.detail.score;
+        if (name === '0') {
+          name = '未审核';
+        }
+        console.log(name);
+        return name;
       }
     }
   };

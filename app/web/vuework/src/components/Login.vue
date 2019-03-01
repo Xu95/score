@@ -8,7 +8,7 @@
             </el-col>
         </el-row>
         <el-row>
-            <el-col :span="size+5">
+            <el-col :span="10">
                 <el-input id="password" v-model="logindata.password" type="password" placeholder="请输入密码">
                     <template slot="prepend">密码</template>
                 </el-input>
@@ -26,7 +26,6 @@
   export default {
     data() {
       return {
-      size: 10,
         logindata: {
           username: '',
           password: '',
