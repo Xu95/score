@@ -5,7 +5,7 @@ const Controller = require('egg').Controller;
 class TaskController extends Controller {
   async list() {
     if (this.ctx.session.username === this.config.globalConst.auditName) this.result.data.roles = 1;
-    const page = this.ctx.params.page || 1;
+    const page = this.ctx.params.page || '0';
     let r;
     try {
       r = await this.service.task.list(page);
@@ -62,7 +62,7 @@ class TaskController extends Controller {
       this.result.status = this.config.number.PARAM_ERROR;
       this.result.data = {};
     }
-    console.log(this.result.data.results);
+    //console.log(this.result.data.results);
     this.ctx.body = this.result;
   }
 

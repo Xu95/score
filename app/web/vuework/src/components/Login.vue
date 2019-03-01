@@ -56,7 +56,7 @@
             this.$router.push({name:'error',params:{errorData:res.data.data}
             })
           }
-          if (res.data.status === 202) {
+          if (res.data.status === 201) {
             console.log('login succeed!');
             const Data = {
               loginuser: this.logindata.username

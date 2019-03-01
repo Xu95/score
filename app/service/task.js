@@ -2,18 +2,47 @@ const Service = require('egg').Service;
 
 class TaskService extends Service {
   async list(page) {
+    let result = [];
+    let r = await this.app.redis.hgetall('task');
+    if (r.length === 0) return result;
+    for (let a  in  r) {
+      let aa = JSON.parse(r[a].replace(/'/g, '"'));
+      if (page === '1') {
+        if (aa.score === '0') {//audit
+          let res = await this.app.redis.hget('user', `${aa.userid}`);
+          console.log(res);
+          aa.applicant_name = JSON.parse(res.replace(/'/g, '"')).username;
+          aa.task_id = a;
+          result.push(aa);
+        }
+      }else{
+        let res = await this.app.redis.hget('user', `${aa.userid}`);
+        console.log(res);
+        aa.applicant_name = JSON.parse(res.replace(/'/g, '"')).username;
+        aa.task_id = a;
+        result.push(aa);
+      }
+    }
+    //console.log(result);
+    return result;
+  }/*
+  async list(page) {
     let start = (page - 1) * this.config.globalConst.PAGE_NUMBER + 1;
     let result = [];
     let r = await this.app.redis.hgetall('task');
     if (r.length === 0) return result;
     for (let a  in  r) {
       if (a >= start) {
-        result.push(JSON.parse(r[a].replace(/'/g, '"')));
+        let aa = JSON.parse(r[a].replace(/'/g, '"'));
+        let res = await this.app.redis.hget('user', `${aa.userid}`);
+        console.log(res);
+        aa.applicant_name = JSON.parse(res.replace(/'/g, '"')).username;
+        result.push(aa);
       }
     }
     //console.log(result);
     return result;
-  }
+  }*/
 
   async timeSearch(startTime, endTime, page) {
     let start = (page - 1) * this.config.globalConst.PAGE_NUMBER + 1;
@@ -41,7 +70,7 @@ class TaskService extends Service {
     for (let a of len) {
       if (a.substr(0, 1) === taskId) filed.push(a);
     }
-    if(filed.length === 0) return result;
+    if (filed.length === 0) return result;
     let [r1, r2] = await Promise.all([redis.hmget('result', filed), redis.hmget('time', filed)]);
     if (r1.length !== r2.length) throw "form /service/task/detail.result table can not match time table";
     for (let i = 0; i < r1.length; i++) {
@@ -56,7 +85,7 @@ class TaskService extends Service {
         score: task1.score,
         hour: b.hour,
         type_id: typeid,
-        type_name: this.config.globalConst.tasktype[Number(typeid)-1],
+        type_name: this.config.globalConst.tasktype[Number(typeid) - 1],
         time_id: b.timeid,
         time_detail: b.timedetail,
       };

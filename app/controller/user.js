@@ -19,14 +19,11 @@ class UserController extends Controller {
       this.ctx.helper.erroDeal(e, 'UserController/login');
       return
     }
-    this.ctx.response.type = 'html';
-    this.ctx.body = userpage;
-    /*
     console.log("ok");
     this.ctx.body = {
-      status: this.config.number.DATA_SUCCESS,
+      status: this.config.number.NO_DATA_SUCCESS,
       data: {},
-    }*/
+    }
   }
 
   async logout() {

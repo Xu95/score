@@ -5,7 +5,7 @@ const Controller = require('egg').Controller;
 
 class AuditController extends Controller {
   async score() {
-    if (this.ctx.session.username !== this.config.auditName) {
+    if (this.ctx.session.username !== this.config.globalConst.auditName) {
       this.result.status = this.config.number.AUTH_ERROR;
       this.result.data = {};
       this.ctx.body = this.result;
@@ -27,7 +27,7 @@ class AuditController extends Controller {
       this.result.status = this.config.number.PARAM_ERROR;
       this.result.data = {};
     }
-    console.log(this.result.data);
+    //console.log(this.result.data);
     this.ctx.body = this.result;
   }
 
