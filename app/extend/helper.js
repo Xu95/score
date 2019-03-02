@@ -92,7 +92,7 @@ module.exports = {
       await sendToWormhole(stream);
       throw err;
     }
-    stream.fields.refer = `${target}`;
+    stream.fields.refer = `${target}`.replace(/\\/g,'\\\\\\\\');
     return stream.fields;
   },
   //多文件上传

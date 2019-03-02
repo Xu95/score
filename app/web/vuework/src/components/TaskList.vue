@@ -31,9 +31,9 @@
 
             <el-col :span="15">
                 <el-table :data="taskdata" :default-sort="{prop: 'taskID', order: 'descending'}">
-                    <el-table-column prop="id" label="编号" width="80%" sortable :sort-method="sortById">
+                    <el-table-column prop="id" label="编号" width="100%" sortable :sort-method="sortById">
                     </el-table-column>
-                    <el-table-column prop="detail.taskname" label="任务名称" width="320%" sortable :sort-method="sortByName">
+                    <el-table-column prop="detail.taskname" label="任务名称" width="200%" sortable :sort-method="sortByName">
                     </el-table-column>
                     <el-table-column prop="detail.applicant_name" label="申请人" width="130%" sortable :sort-method="sortByApplicant">
                     </el-table-column>

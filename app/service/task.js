@@ -81,11 +81,13 @@ class TaskService extends Service {
     //console.log(filed);
     if (filed.length === 0) return result;
     let [r1, r2] = await Promise.all([redis.hmget('result', filed), redis.hmget('time', filed)]);
-    //console.log(`r1:${r1} r2: ${r2}`);
+    console.log(`r1:${r1} r2: ${r2}`);
     if (r1.length !== r2.length) throw "form /service/task/detail.result table can not match time table";
     for (let i = 0; i < r1.length; i++) {
-      const a = JSON.parse(r1[i].replace(/'/g, '"'));
-      const b = JSON.parse(r2[i].replace(/'/g, '"'));
+      console.log(r1[i]);
+      const a =JSON.parse(r1[i]);
+      console.log(r2[i]);
+      const b = JSON.parse(r2[i]);
       const typeid = b.typeid;
       const obj = {
         result_name: a.resultname,
@@ -101,7 +103,7 @@ class TaskService extends Service {
       };
       result.push(obj);
     }
-    //console.log(result);
+    console.log(result);
     return result;
   }
 

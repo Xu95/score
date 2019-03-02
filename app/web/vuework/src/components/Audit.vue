@@ -64,7 +64,7 @@
                 <el-table :data="taskdetail">
                     <el-table-column label="成果名" width="200px" prop="result_name" align="center"></el-table-column>
                     <el-table-column label="成果描述" width="250px" prop="result_detail" align="center"></el-table-column>
-                    <el-table-column label="参考" width="200px" prop="refer" align="center"></el-table-column>
+                    <el-table-column label="参考" width="200px" prop="refer" align="center" :formatter="renameRefer"></el-table-column>
                     <el-table-column label="工作时间" width="90px" prop="hour" align="center"></el-table-column>
                 </el-table>
             </el-row>

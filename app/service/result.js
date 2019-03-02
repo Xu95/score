@@ -1,4 +1,5 @@
 const Service = require('egg').Service;
+const fs = require('fs');
 
 class ResultService extends Service {
   async detail(taskId, fieldId) {
@@ -31,7 +32,6 @@ class ResultService extends Service {
         console.log('文件:' + filepath + '删除成功！');
       })
     }
-    throw "11";
     let [r1, r2] = await Promise.all([Redis.hdel('result', `${taskId}:${fieldId}`), Redis.hdel('time', `${taskId}:${fieldId}`)]);
     //console.log(`r1:${r1},r2:${r2}`);
     return r1 && r2;

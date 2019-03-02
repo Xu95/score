@@ -1,0 +1,256 @@
+<template>
+    <div>
+        <el-container style="height: 100%; border: 1px solid #eee">
+            <el-col :span="3" style="background-color: rgb(238, 241, 246)">
+                <el-menu style="height:100%" default-active="2">
+                    <el-menu-item index="0">
+                        <i></i>
+                        <span slot="title"></span>
+                    </el-menu-item>
+                    <el-menu-item index="1">
+                        <i></i>
+                        <span slot="title"><b>功能模块</b></span>
+                    </el-menu-item>
+                    <el-menu-item index="2">
+                        <i class="el-icon-menu"></i>
+                        <el-button type="text" style="color: #606266" @click="getTaskList">任务列表</el-button>
+                    </el-menu-item>
+                    <el-menu-item index="3" :disabled="disables">
+                        <i class="el-icon-edit"></i>
+                        <el-button type="text" style="color: #606266" @click="taskedit()">任务审计</el-button>
+                    </el-menu-item>
+                    <el-tooltip content="点击退出" placement="bottom">
+                        <el-menu-item index="4">
+                            <i class="el-icon-setting"></i>
+                            <el-button type="text" style="color: #606266" @click="logout()">{{ name.loginuser }}
+                            </el-button>
+                        </el-menu-item>
+                    </el-tooltip>
+                </el-menu>
+            </el-col>
+
+            <el-col :span="20">
+                <el-table :data="taskdetail" :default-sort="{prop: 'taskdetail.detail.result_id', order: 'descending'}" align="center">
+                    <el-table-column prop="detail.result_id" label="编号" width="80%" sortable align="center">
+                    </el-table-column>
+                    <el-table-column prop="detail.result_name" label="成果名称" width="150%" sortable align="center">
+                    </el-table-column>
+                    <el-table-column prop="this.applicant_name" label="申请人" width="130%" sortable align="center"
+                                     :formatter="changeName">
+                    </el-table-column>
+                    <el-table-column prop="detail.type_name" label="工作类型" width="100%" align="center">
+                    </el-table-column>
+                    <el-table-column prop="detail.time_detail" label="工时详细" width="200%" sortable align="center">
+                    </el-table-column>
+                    <el-table-column label="参考" width="300%" prop="refer" align="center" :formatter="renameRefer"></el-table-column>
+                    <el-table-column prop="detail.score" label="评分" width="100%" :formatter="changescore" align="center"></el-table-column>
+                        <el-table-column property="status" label="功能区" width="160%" align="center">
+                            <template slot-scope="scope">
+                                <el-button-group>
+                                    <el-button type="info" v-model="scope.row.status" style="color: #606266"
+                                               v-if="flag"
+                                               @click="deleteResult(scope.row)">删除
+                                    </el-button>
+                                    <el-button type="primary" v-model="scope.row.status" style="color: #606266"
+                                               v-if="flag"
+                                               @click="showDetail(scope.row)">编辑
+                                    </el-button>
+                                    <el-button type="text" v-model="scope.row.status" style="color: #606266"
+                                               v-if="!flag"
+                                               @click="showDetail(scope.row)">你没有编辑权限
+                                    </el-button>
+                                </el-button-group>
+                            </template>
+                        </el-table-column>
+                </el-table>
+            </el-col>
+
+            <el-col :span="6" style="margin-top: 6%">
+                <div>
+                    <el-button @click="addTask()" type="primary" style="width:220px">新建任务</el-button>
+                    <br><br><br>
+                    <el-button @click="addTask()" type="primary" style="width:220px" v-if="flag">新建成果</el-button>
+                </div>
+            </el-col>
+        </el-container>
+
+        <!-- 新增任务 -->
+        <el-dialog title="新增任务" :visible.sync="dialogVisible2" :before-close="close" width="30%">
+            <p><b>任务名称：</b><input v-model="newtask.name" type="text"></p>
+            <p><b>启动时间：</b><input v-model="newtask.starttime" type="text"></p>
+            <p><b>成果展示：</b><input v-model="newtask.refer" type="text" placeholder="请输入链接"></p>
+            <span slot="footer" class="dialog-footer">
+    <el-button @click="addresult()" type="primary" circle>成果添加</el-button>
+    <el-button @click="dialogVisible2 = false">取 消</el-button>
+    <el-button type="primary" @click="auditing()">确 定</el-button>
+  </span>
+        </el-dialog>
+
+        <!-- 新增任务成果 -->
+        <el-dialog title="新增任务" :visible.sync="dialogVisible3" :before-close="close" width="30%">
+            <p><b>成果名：</b><input v-model="newtask.name" type="text"></p>
+            <p><b>参考：</b><input v-model="newtask.starttime" type="text"></p>
+            <p><b>描述：</b><input v-model="newtask.refer" type="text" placeholder="请输入链接"></p>
+            <p><b>工作时间：</b><input v-model="newtask.starttime" type="text"></p>
+            <p><b>时间描述：</b><input v-model="newtask.starttime" type="text"></p>
+            <span slot="footer" class="dialog-footer">
+    <el-button @click="addresult()" type="primary" circle>成果添加</el-button>
+    <el-button @click="dialogVisible2 = false">取 消</el-button>
+    <el-button type="primary" @click="auditing()">确 定</el-button>
+  </span>
+        </el-dialog>
+
+    </div>
+</template>
+
+
+<style>
+    .el-header {
+        background-color: #B3C0D1;
+        color: #333;
+        line-height: 60px;
+    }
+
+    .el-aside {
+        color: #333;
+    }
+
+    .el-dialog__body {
+        padding: 0px
+    }
+
+    input {
+        border-bottom: 1px solid #dbdbdb;
+        border-top: 0px;
+        border-left: 0px;
+        border-right: 0px;
+        height: 30px;
+        outline: none;
+    }
+</style>
+
+<script>
+  export default {
+    inject: ['reload'],
+    data() {
+      return {
+        taskdetail: [],
+        taskId: '',
+        timedata1: '',
+        timedata2: '',
+        dialogdata: {},
+        applicant_name: '',
+        name: JSON.parse(sessionStorage.getItem('username')),
+        dialogVisible1: false,
+        dialogVisible2: false,
+        dialogVisible3: false,
+        flag: true,
+        disables: false,
+
+        newtask: {
+          name: '',
+          starttime: '',
+        }
+      }
+    },
+    mounted: function () {
+      console.log(`this is query: ${this.$route.query.task_id}`);
+      this.taskId = this.$route.query.task_id;
+      this.applicant_name = this.$route.query.applicant_name;
+      if (this.name === this.applicant_name) this.flag = true;
+      let url = '/api/task/detail/' + this.taskId;
+      console.log(url);
+      this.$axios({
+        url: '/api/task/detail/' + this.taskId,
+        method: 'get',
+      }).then((res) => {
+        console.log(res.data);
+        const result = res.data.data.results;
+        for (let i in result) {
+          this.taskdetail.push({id: i, detail: result[i]});
+        }
+      }, (err) => {
+        console.log(err);
+      });
+    },
+    methods: {
+      taskedit() {
+        if (this.disables === false) {
+          this.$router.replace('/audit');
+        } else {
+          this.$message.error('当前用户没有操作权限');
+        }
+      }
+      ,
+
+      logout() {
+        sessionStorage.setItem('username', '');
+        this.$router.replace('/login');
+      }
+      ,
+      auditing() {
+        this.dialogVisible1 = false;
+      }
+      ,
+      close(done) {
+        done();
+      }
+      ,
+      addTask() {
+        //this.dialogVisible2 = true;
+        this.$router.replace('/addTask');
+      }
+      ,
+      timeSearch(t1, t2) {
+        let url = '/api/task/timeSearch/' + t1 + '/' + t2;
+        console.log(url);
+        this.$axios({
+          url: '/api/task/timeSearch/' + t1 + '/' + t2,
+          method: 'get',
+        }).then((res) => {
+          //console.log(res.data);
+          this.taskdata = [];
+          const result = res.data.data.results;
+          for (let i in result) {
+            this.taskdata.push({id: i, detail: result[i]});
+          }
+          console.log(this.taskdata);
+        }, (err) => {
+          console.log(err);
+        });
+      },
+      changescore: function (row) {
+        let name = row.detail.score;
+        if (name === '0') {
+          name = '未审核';
+        }
+        console.log(name);
+        return name;
+      },
+      getTaskList: function () {
+        this.$router.replace('/tasklist');
+      },
+      changeName: function () {
+        return this.applicant_name;
+      },
+      deleteResult: function (row) {
+        let url = '/api/result/delete/' + this.taskId + '/' + row.detail.result_id;
+        console.log(url);
+        console.log(row);
+        this.$axios({
+          url: url,
+          method: 'get',
+        }).then((res) => {
+          //console.log(res.data);
+        }, (err) => {
+          console.log(err);
+        });
+        this.reload();
+      },
+      renameRefer:function (row) {
+        if(row.detail.refer === 'null') return '无文件';
+        return row.detail.refer;
+      },
+    }
+  };
+</script>
