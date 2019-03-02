@@ -30,12 +30,12 @@
             </el-col>
 
             <el-col :span="20">
-                <el-table :data="taskdetail" :default-sort="{prop: 'taskdetail.detail.result_id', order: 'descending'}" align="center">
+                <el-table :data="taskdetail" :default-sort="{prop: 'detail.result_id', order: 'descending'}" align="center">
                     <el-table-column prop="detail.result_id" label="编号" width="80%" sortable align="center">
                     </el-table-column>
                     <el-table-column prop="detail.result_name" label="成果名称" width="150%" sortable align="center">
                     </el-table-column>
-                    <el-table-column prop="this.applicant_name" label="申请人" width="130%" sortable align="center"
+                    <el-table-column prop="this.taskquery.applicant_name" label="申请人" width="130%" sortable align="center"
                                      :formatter="changeName">
                     </el-table-column>
                     <el-table-column prop="detail.type_name" label="工作类型" width="100%" align="center">
@@ -53,7 +53,7 @@
                                     </el-button>
                                     <el-button type="primary" v-model="scope.row.status" style="color: #606266"
                                                v-if="flag"
-                                               @click="showDetail(scope.row)">编辑
+                                               @click="editTask()">编辑
                                     </el-button>
                                     <el-button type="text" v-model="scope.row.status" style="color: #606266"
                                                v-if="!flag"
@@ -69,7 +69,7 @@
                 <div>
                     <el-button @click="addTask()" type="primary" style="width:220px">新建任务</el-button>
                     <br><br><br>
-                    <el-button @click="addTask()" type="primary" style="width:220px" v-if="flag">新建成果</el-button>
+                    <el-button @click="editTask()" type="primary" style="width:220px" v-if="flag">新建成果</el-button>
                 </div>
             </el-col>
         </el-container>
@@ -135,11 +135,15 @@
     data() {
       return {
         taskdetail: [],
-        taskId: '',
+        taskquery:{
+        task_id:'',
+        task_name:'',
+        applicant_name:'',
+        time:''
+        },
         timedata1: '',
         timedata2: '',
         dialogdata: {},
-        applicant_name: '',
         name: JSON.parse(sessionStorage.getItem('username')),
         dialogVisible1: false,
         dialogVisible2: false,
@@ -154,14 +158,16 @@
       }
     },
     mounted: function () {
-      console.log(`this is query: ${this.$route.query.task_id}`);
-      this.taskId = this.$route.query.task_id;
-      this.applicant_name = this.$route.query.applicant_name;
-      if (this.name === this.applicant_name) this.flag = true;
+      this.taskquery.task_id = this.$route.params.task_id;
+      this.taskquery.task_name = this.$route.params.task_name;
+      this.taskquery.applicant_name = this.$route.params.applicant_name;
+      this.taskquery.time = this.$route.params.time;
+      console.log(this.taskquery);
+      if (this.name === this.taskquery.applicant_name) this.flag = true;
       let url = '/api/task/detail/' + this.taskId;
       console.log(url);
       this.$axios({
-        url: '/api/task/detail/' + this.taskId,
+        url: '/api/task/detail/' + this.taskquery.task_id,
         method: 'get',
       }).then((res) => {
         console.log(res.data);
@@ -180,9 +186,17 @@
         } else {
           this.$message.error('当前用户没有操作权限');
         }
-      }
-      ,
-
+      },
+      editTask(){
+        this.$router.replace({
+          name: 'EditTask',
+          params:{
+            task_id:this.taskquery.task_id,
+            task_name:this.taskquery.task_name,
+            time:this.taskquery.time,
+          }
+        })
+      },
       logout() {
         sessionStorage.setItem('username', '');
         this.$router.replace('/login');
@@ -231,7 +245,7 @@
         this.$router.replace('/tasklist');
       },
       changeName: function () {
-        return this.applicant_name;
+        return this.taskquery.applicant_name;
       },
       deleteResult: function (row) {
         let url = '/api/result/delete/' + this.taskId + '/' + row.detail.result_id;

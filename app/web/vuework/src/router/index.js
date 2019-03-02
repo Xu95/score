@@ -6,6 +6,7 @@ import Audit from '@/components/Audit'
 import TaskList from '@/components/TaskList'
 import TaskDetail from '@/components/TaskDetail'
 import AddTask from '@/components/AddTask'
+import EditTask from '@/components/EditTask'
 import error from '@/components/error'
 
 Vue.use(Router)
@@ -50,6 +51,14 @@ export default new Router({
       path: '/addTask',
       name: 'AddTask',
       component: AddTask,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/editTask',
+      name: 'EditTask',
+      component: EditTask,
       meta: {
         requireAuth: true
       }

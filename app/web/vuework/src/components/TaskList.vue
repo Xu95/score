@@ -30,18 +30,18 @@
             </el-col>
 
             <el-col :span="15">
-                <el-table :data="taskdata" :default-sort="{prop: 'taskID', order: 'descending'}">
-                    <el-table-column prop="id" label="编号" width="100%" sortable :sort-method="sortById">
+                <el-table :data="taskdata" :default-sort="{prop: 'id', order: 'descending'}" width="100%">
+                    <el-table-column prop="id" label="编号" min-width="9%" sortable :sort-method="sortById">
                     </el-table-column>
-                    <el-table-column prop="detail.taskname" label="任务名称" width="200%" sortable :sort-method="sortByName">
+                    <el-table-column prop="detail.taskname" label="任务名称" min-width="25%" sortable :sort-method="sortByName">
                     </el-table-column>
-                    <el-table-column prop="detail.applicant_name" label="申请人" width="130%" sortable :sort-method="sortByApplicant">
+                    <el-table-column prop="detail.applicant_name" label="申请人" min-width="11%" sortable :sort-method="sortByApplicant">
                     </el-table-column>
-                    <el-table-column prop="detail.time" label="启动时间" width="150%" sortable :sort-method="sortByTime">
+                    <el-table-column prop="detail.time" label="启动时间" min-width="15%" sortable :sort-method="sortByTime">
                     </el-table-column>
-                    <el-table-column prop="detail.score" label="评分" width="100%" :formatter="changescore" :sort-method="sortByScore">
+                    <el-table-column prop="detail.score" label="评分" min-width="12%" :formatter="changescore" :sort-method="sortByScore">
                     </el-table-column>
-                    <el-table-column property="status" label="功能区" width="160%">
+                    <el-table-column property="status" label="功能区" min-width="13%">
                         <template slot-scope="scope">
                             <i class="el-icon-zoom-in"></i>
                             <el-button type="text" v-model="scope.row.status" style="color: #606266"
@@ -236,12 +236,14 @@
       },
       showDetail(row) {
         console.log(row.detail.task_id);
-        let url = '/taskDetail';
+        let url = 'TaskDetail';
         this.$router.replace({
-          path: url,
-          query:{
+          name: url,
+          params:{
             task_id:row.detail.task_id,
             applicant_name:row.detail.applicant_name,
+            task_name:row.detail.taskname,
+            time:row.detail.time,
           }
         })
       },

@@ -9,6 +9,10 @@ class UserService extends Service {
       status: this.config.number.NO_USE,
       data: {}
     };
+    result.status = this.config.number.DATA_SUCCESS;
+    result.data = {username: params.username};
+    //console.log(result);
+    return result;
     let permmit = await this.userauth(params.username, params.password);
     //r = await this.app.redis.hget('user', id);
     console.log(permmit);
@@ -38,10 +42,6 @@ class UserService extends Service {
         }
       }
       //r = JSON.parse(r.replace(/'/g, '"'));
-      result.status = this.config.number.DATA_SUCCESS;
-      result.data = {username: params.username};
-      //console.log(result);
-      return result;
     } else {
       return false;
     }

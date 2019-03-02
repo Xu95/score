@@ -30,18 +30,18 @@
             </el-col>
 
             <el-col :span="21">
-                <el-table :data="tasklist" :default-sort="{prop: 'taskID', order: 'descending'}">
-                    <el-table-column prop="task_id" label="编号" width="80%" sortable :sort-method="sortById">
+                <el-table :data="tasklist" :default-sort="{prop: 'task_id', order: 'descending'}" width="100%" align="center">
+                    <el-table-column prop="task_id" label="编号" min-width="9%" sortable :sort-method="sortById">
                     </el-table-column>
-                    <el-table-column prop="taskname" label="任务名称" width="400%" sortable :sort-method="sortByName">
+                    <el-table-column prop="taskname" label="任务名称" min-width="20%" sortable :sort-method="sortByName">
                     </el-table-column>
-                    <el-table-column prop="applicant_name" label="申请人" width="200%" sortable :sort-method="sortByApplicant">
+                    <el-table-column prop="applicant_name" label="申请人" min-width="11%" sortable :sort-method="sortByApplicant">
                     </el-table-column>
-                    <el-table-column prop="time" label="任务启动时间" width="200%" sortable :sort-method="sortByTime">
+                    <el-table-column prop="time" label="任务启动时间" min-width="15%" sortable :sort-method="sortByTime">
                     </el-table-column>
-                    <el-table-column prop="score" label="评分" width="100%" :formatter="changescore">
+                    <el-table-column prop="score" label="评分" min-width="12%" :formatter="changescore">
                     </el-table-column>
-                    <el-table-column property="status" label="功能区" width="200%">
+                    <el-table-column property="status" label="功能区" min-width="13s%">
                         <template slot-scope="scope">
                             <i class="el-icon-zoom-in"></i>
                             <el-button type="text" v-model="scope.row.status" style="color: #606266"

@@ -22,14 +22,17 @@ class ResultService extends Service {
     const Redis = this.app.redis;
     let aa = await Redis.hget('result', `${taskId}:${fieldId}`);
     aa = JSON.parse(aa.replace(/'/g, '"'));
-    console.log(aa);
+    let b = aa.refer.replace(/\\\\/g, '\\');
+    console.log(b);
+    if (fs.existsSync(aa.refer.replace(/\\\\/g, '\\'))) console.log("this is ok");
     if (aa.refer !== 'null') {
-      console.log("不为空");
-      fs.unlink(aa.refer, function (err) {
-        if (err) {
-          throw err;
+      fs.exists(b, function (exist) {
+        if (exist) {
+          fs.unlink(aa.refer.replace(/\\\\/g, '\\'), function (err) {
+            if (err) throw err;
+            console.log('文件删除成功！');
+          })
         }
-        console.log('文件:' + filepath + '删除成功！');
       })
     }
     let [r1, r2] = await Promise.all([Redis.hdel('result', `${taskId}:${fieldId}`), Redis.hdel('time', `${taskId}:${fieldId}`)]);
