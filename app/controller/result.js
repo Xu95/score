@@ -48,7 +48,7 @@ class ResultController extends Controller {
         param = await this.ctx.helper.upload();
       }
       //param = await this.ctx.helper.upload2();
-      console.log(param);
+      //console.log(param);
       /*
       this.result.status = this.config.number.NO_DATA_SUCCESS;
       this.result.data = {};
@@ -67,7 +67,7 @@ class ResultController extends Controller {
       this.result.status = this.config.number.PARAM_ERROR;
       this.result.data = {};
     }
-    console.log(this.result.data);
+    //console.log(this.result.data);
     this.ctx.body = this.result;
   }
 }

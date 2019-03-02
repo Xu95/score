@@ -7,17 +7,19 @@ class TaskService extends Service {
     if (r.length === 0) return result;
     for (let a  in  r) {
       let aa = JSON.parse(r[a].replace(/'/g, '"'));
+      //let par = {task_name:`${aa.taskname}`,user_id:`${aa.userid}`,time:`${aa.time}`,score:`0`};
+      //await this.app.redis.hset('task',`${a}`,`${this.ctx.helper.taskValue(par)}`);
       if (page === '1') {
         if (aa.score === '0') {//audit
           let res = await this.app.redis.hget('user', `${aa.userid}`);
-          console.log(res);
+          //console.log(res);
           aa.applicant_name = JSON.parse(res.replace(/'/g, '"')).username;
           aa.task_id = a;
           result.push(aa);
         }
       } else {
         let res = await this.app.redis.hget('user', `${aa.userid}`);
-        console.log(res);
+        //console.log(res);
         aa.applicant_name = JSON.parse(res.replace(/'/g, '"')).username;
         aa.task_id = a;
         result.push(aa);
@@ -66,17 +68,20 @@ class TaskService extends Service {
   }
 
   async detail(taskId) {
-    let i = 1, result = [];
+    let result = [];
     const redis = this.app.redis;
     let task1 = await redis.hget('task', `${taskId}`);
     if (!task1) return false;
     task1 = JSON.parse(task1.replace(/'/g, '"'));//task表
     let len = await redis.hkeys('result'), filed = [];
     for (let a of len) {
-      if (a.substr(0, 1) === taskId) filed.push(a);
+      let b = a.split(':');
+      if (b[0] === taskId) filed.push(a);
     }
+    //console.log(filed);
     if (filed.length === 0) return result;
     let [r1, r2] = await Promise.all([redis.hmget('result', filed), redis.hmget('time', filed)]);
+    //console.log(`r1:${r1} r2: ${r2}`);
     if (r1.length !== r2.length) throw "form /service/task/detail.result table can not match time table";
     for (let i = 0; i < r1.length; i++) {
       const a = JSON.parse(r1[i].replace(/'/g, '"'));
@@ -101,8 +106,16 @@ class TaskService extends Service {
   }
 
   async increase(params) {
-    let maxNum = await this.app.redis.hlen('task');
-    let result = await this.app.redis.hset('task', `${maxNum + 1}`, `${this.ctx.helper.taskValue(params)}`);
+    const Redis = this.app.redis;
+    let r = await Redis.hgetall('user');
+    for (let a in r) {
+      let b = JSON.parse(r[a].replace(/'/g, '"'));
+      if (b.username === params.user_name) params.user_id = a;
+    }
+    params.time = params.time.substr(0, 10);
+    //console.log(params);
+    let maxNum = await Redis.hlen('task');
+    let result = await Redis.hset('task', `${maxNum + 1}`, `${this.ctx.helper.taskValue(params)}`);
     if (result) return maxNum + 1;
   }
 

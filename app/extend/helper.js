@@ -66,6 +66,7 @@ module.exports = {
     this.ctx.body = res;
   },
   async upload() {
+    console.log('this is upload');
     let stream = await this.ctx.getFileStreamWithoutFileNotFoundError();
     //console.log(stream);
     if (!stream.filename) {

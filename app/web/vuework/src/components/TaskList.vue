@@ -31,15 +31,15 @@
 
             <el-col :span="15">
                 <el-table :data="taskdata" :default-sort="{prop: 'taskID', order: 'descending'}">
-                    <el-table-column prop="id" label="编号" width="80%" sortable>
+                    <el-table-column prop="id" label="编号" width="80%" sortable :sort-method="sortById">
                     </el-table-column>
-                    <el-table-column prop="detail.taskname" label="任务名称" width="320%" sortable>
+                    <el-table-column prop="detail.taskname" label="任务名称" width="320%" sortable :sort-method="sortByName">
                     </el-table-column>
-                    <el-table-column prop="detail.applicant_name" label="申请人" width="130%" sortable>
+                    <el-table-column prop="detail.applicant_name" label="申请人" width="130%" sortable :sort-method="sortByApplicant">
                     </el-table-column>
-                    <el-table-column prop="detail.time" label="启动时间" width="150%" sortable>
+                    <el-table-column prop="detail.time" label="启动时间" width="150%" sortable :sort-method="sortByTime">
                     </el-table-column>
-                    <el-table-column prop="detail.score" label="评分" width="100%" :formatter="changescore">
+                    <el-table-column prop="detail.score" label="评分" width="100%" :formatter="changescore" :sort-method="sortByScore">
                     </el-table-column>
                     <el-table-column property="status" label="功能区" width="160%">
                         <template slot-scope="scope">
@@ -65,7 +65,7 @@
                     </div>
                     <br/>
                     <el-button icon="el-icon-search" type="primary" style="width:220px"
-                               @click=typeSearch(timedata1,timedata2)>查询
+                               @click=timeSearch(timedata1,timedata2)>查询
                     </el-button>
                 </div>
             </el-col>
@@ -90,7 +90,23 @@
                 <el-col :span="12">
                     <div class="grid-content bg-purple">
                         <el-table :data="taskdetail">
-                            <el-table-column label="工作时间" width="200px" prop="detail.time_detail" align="center">
+                            <el-table-column label="工作时间" width="200px" prop="detail.hour" align="center">
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="grid-content bg-purple">
+                        <el-table :data="taskdetail">
+                            <el-table-column label="工作类型" width="200px" prop="detail.type_name" align="center">
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="grid-content bg-purple">
+                        <el-table :data="taskdetail">
+                            <el-table-column label="成果名" width="200px" prop="detail.result_name" align="center">
                             </el-table-column>
                         </el-table>
                     </div>
@@ -219,30 +235,21 @@
         done();
       },
       showDetail(row) {
-        //console.log(row);
-        this.dialogdata = row.detail;
-        //console.log(this.dialogdata);
-        this.taskId = row.detail.task_id;
-        this.dialogVisible1 = true;
-        this.$axios({
-          url: '/api/task/detail/' + this.taskId,
-          method: 'get',
-        }).then((res) => {
-          //console.log(res.data);
-          const result = res.data.data.results;
-          for (let i in result) {
-            this.taskdetail.push({id: i, detail: result[i]});
+        console.log(row.detail.task_id);
+        let url = '/taskDetail';
+        this.$router.replace({
+          path: url,
+          query:{
+            task_id:row.detail.task_id,
+            applicant_name:row.detail.applicant_name,
           }
-        }, (err) => {
-          console.log(err);
-        });
-        //console.log(this.taskdetail)
+        })
       },
       addTask() {
         //this.dialogVisible2 = true;
         this.$router.replace('/addTask');
       },
-      typeSearch(t1, t2) {
+      timeSearch(t1, t2) {
         let url = '/api/task/timeSearch/' + t1 + '/' + t2;
         console.log(url);
         this.$axios({
@@ -267,7 +274,32 @@
         }
         console.log(name);
         return name;
-      }
+      },
+      sortByName:function (obj1,obj2) {
+        let v1 = obj1.detail.taskname;
+        let v2 = obj2.detail.taskname;
+        return v1-v2;
+      },
+      sortByApplicant:function (obj1,obj2) {
+        let v1 = obj1.detail.applicant_name;
+        let v2 = obj2.detail.applicant_name;
+        return v1-v2;
+      },
+      sortByTime:function (obj1,obj2) {
+        let v1 = obj1.detail.time;
+        let v2 = obj2.detail.time;
+        return v1 - v2;
+      },
+      sortById:function (obj1,obj2) {
+        let v1 = obj1.id;
+        let v2 = obj2.id;
+        return v1 - v2;
+      },
+      sortByScore:function (obj1,obj2) {
+        let v1 = obj1.detail.score;
+        let v2 = obj2.detail.score;
+        return v1 - v2;
+      },
     }
   };
 </script>

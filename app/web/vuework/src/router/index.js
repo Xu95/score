@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import Audit from '@/components/Audit'
 import TaskList from '@/components/TaskList'
+import TaskDetail from '@/components/TaskDetail'
 import AddTask from '@/components/AddTask'
 import error from '@/components/error'
 
@@ -33,6 +34,14 @@ export default new Router({
       path: '/tasklist',
       name: 'TaskList',
       component: TaskList,
+      meta: {
+        requireAuth: true
+      }
+    },
+    {
+      path: '/taskDetail',
+      name: 'TaskDetail',
+      component: TaskDetail,
       meta: {
         requireAuth: true
       }

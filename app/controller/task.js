@@ -20,7 +20,7 @@ class TaskController extends Controller {
       this.result.status = this.config.number.DATA_SUCCESS;
       this.result.data.results = r;
     }
-    console.log(this.result.data.results);
+    //console.log(this.result.data.results);
     this.ctx.body = this.result;
   }
 
@@ -48,7 +48,7 @@ class TaskController extends Controller {
   async detail() {
     if (this.ctx.session.username === this.config.globalConst.auditName) this.result.data.roles = 1;
     const taskId = this.ctx.params.task_id;
-    console.log(this.ctx.params);
+    //console.log(taskId);
     let r;
     try {
       r = await this.service.task.detail(taskId);
