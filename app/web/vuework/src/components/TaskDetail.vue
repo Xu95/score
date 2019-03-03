@@ -30,38 +30,42 @@
             </el-col>
 
             <el-col :span="20">
-                <el-table :data="taskdetail" :default-sort="{prop: 'detail.result_id', order: 'descending'}" align="center">
+                <el-table :data="taskdetail" :default-sort="{prop: 'detail.result_id', order: 'descending'}"
+                          align="center">
                     <el-table-column prop="detail.result_id" label="编号" width="80%" sortable align="center">
                     </el-table-column>
                     <el-table-column prop="detail.result_name" label="成果名称" width="150%" sortable align="center">
                     </el-table-column>
-                    <el-table-column prop="this.taskquery.applicant_name" label="申请人" width="130%" sortable align="center"
+                    <el-table-column prop="this.taskquery.applicant_name" label="申请人" width="130%" sortable
+                                     align="center"
                                      :formatter="changeName">
                     </el-table-column>
                     <el-table-column prop="detail.type_name" label="工作类型" width="100%" align="center">
                     </el-table-column>
                     <el-table-column prop="detail.time_detail" label="工时详细" width="200%" sortable align="center">
                     </el-table-column>
-                    <el-table-column label="参考" width="300%" prop="refer" align="center" :formatter="renameRefer"></el-table-column>
-                    <el-table-column prop="detail.score" label="评分" width="100%" :formatter="changescore" align="center"></el-table-column>
-                        <el-table-column property="status" label="功能区" width="160%" align="center">
-                            <template slot-scope="scope">
-                                <el-button-group>
-                                    <el-button type="info" v-model="scope.row.status" style="color: #606266"
-                                               v-if="flag"
-                                               @click="deleteResult(scope.row)">删除
-                                    </el-button>
-                                    <el-button type="primary" v-model="scope.row.status" style="color: #606266"
-                                               v-if="flag"
-                                               @click="editTask()">编辑
-                                    </el-button>
-                                    <el-button type="text" v-model="scope.row.status" style="color: #606266"
-                                               v-if="!flag"
-                                               @click="showDetail(scope.row)">你没有编辑权限
-                                    </el-button>
-                                </el-button-group>
-                            </template>
-                        </el-table-column>
+                    <el-table-column label="参考" width="300%" prop="refer" align="center"
+                                     :formatter="renameRefer"></el-table-column>
+                    <el-table-column prop="detail.score" label="评分" width="100%" :formatter="changescore"
+                                     align="center"></el-table-column>
+                    <el-table-column property="status" label="功能区" width="160%" align="center">
+                        <template slot-scope="scope">
+                            <el-button-group>
+                                <el-button type="info" v-model="scope.row.status" style="color: #606266"
+                                           v-if="flag"
+                                           @click="deleteResult(scope.row)">删除
+                                </el-button>
+                                <el-button type="primary" v-model="scope.row.status" style="color: #606266"
+                                           v-if="flag"
+                                           @click="editTask()">编辑
+                                </el-button>
+                                <el-button type="text" v-model="scope.row.status" style="color: #606266"
+                                           v-if="!flag"
+                                           @click="showDetail(scope.row)">无法编辑
+                                </el-button>
+                            </el-button-group>
+                        </template>
+                    </el-table-column>
                 </el-table>
             </el-col>
 
@@ -135,11 +139,11 @@
     data() {
       return {
         taskdetail: [],
-        taskquery:{
-        task_id:'',
-        task_name:'',
-        applicant_name:'',
-        time:''
+        taskquery: {
+          task_id: '',
+          task_name: '',
+          applicant_name: '',
+          time: ''
         },
         timedata1: '',
         timedata2: '',
@@ -148,9 +152,8 @@
         dialogVisible1: false,
         dialogVisible2: false,
         dialogVisible3: false,
-        flag: true,
+        flag: false,
         disables: false,
-
         newtask: {
           name: '',
           starttime: '',
@@ -162,16 +165,18 @@
       this.taskquery.task_name = this.$route.params.task_name;
       this.taskquery.applicant_name = this.$route.params.applicant_name;
       this.taskquery.time = this.$route.params.time;
-      console.log(this.taskquery);
-      if (this.name === this.taskquery.applicant_name) this.flag = true;
+      let check = this.$route.params.score;
+      console.log(`the socre : ${this.$route.params.score}`);
+      if (this.name.loginuser === this.taskquery.applicant_name && check === '0') this.flag = true;
       let url = '/api/task/detail/' + this.taskId;
       console.log(url);
       this.$axios({
         url: '/api/task/detail/' + this.taskquery.task_id,
         method: 'get',
       }).then((res) => {
-        if(res.data.status === 304){
-          this.$router.push({name:'error',params:{errorData:res.data.data}
+        if (res.data.status === 304) {
+          this.$router.push({
+            name: 'error', params: {errorData: res.data.data}
           })
         }
         const result = res.data.data.results;
@@ -190,13 +195,13 @@
           this.$message.error('当前用户没有操作权限');
         }
       },
-      editTask(){
+      editTask() {
         this.$router.replace({
           name: 'EditTask',
-          params:{
-            task_id:this.taskquery.task_id,
-            task_name:this.taskquery.task_name,
-            time:this.taskquery.time,
+          params: {
+            task_id: this.taskquery.task_id,
+            task_name: this.taskquery.task_name,
+            time: this.taskquery.time,
           }
         })
       },
@@ -225,8 +230,9 @@
           url: '/api/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
         }).then((res) => {
-          if(res.data.status === 304){
-            this.$router.push({name:'error',params:{errorData:res.data.data}
+          if (res.data.status === 304) {
+            this.$router.push({
+              name: 'error', params: {errorData: res.data.data}
             })
           }
           this.taskdata = [];
@@ -261,8 +267,9 @@
           url: url,
           method: 'get',
         }).then((res) => {
-          if(res.data.status === 304){
-            this.$router.push({name:'error',params:{errorData:res.data.data}
+          if (res.data.status === 304) {
+            this.$router.push({
+              name: 'error', params: {errorData: res.data.data}
             })
           }
         }, (err) => {
@@ -270,8 +277,8 @@
         });
         this.reload();
       },
-      renameRefer:function (row) {
-        if(row.detail.refer === 'null') return '无文件';
+      renameRefer: function (row) {
+        if (row.detail.refer === 'null') return '无文件';
         return row.detail.refer;
       },
     }

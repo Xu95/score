@@ -341,6 +341,8 @@
               data: {
                 task_name: this.tasks.task_name,
                 time: this.tasks.task_time,
+                user_name: this.name.loginuser,
+                score: '0',
               }
             }).then((res) => {
               if(res.data.status === 304){

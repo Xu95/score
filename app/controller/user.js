@@ -10,11 +10,6 @@ class UserController extends Controller {
   async login() {
     //console.log(this.ctx.cookies.get('csrfToken'));
     let result;
-    result = {
-      status: this.config.number.NO_DATA_SUCCESS,
-      data: {},
-    };
-    return this.ctx.body = result;;
     let params = this.ctx.request.body;//params-- / ; query-- ?
     try {
       const permmit = await this.service.user.login(params);

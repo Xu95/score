@@ -247,6 +247,7 @@
             applicant_name:row.detail.applicant_name,
             task_name:row.detail.taskname,
             time:row.detail.time,
+            score:row.detail.score,
           }
         })
       },
