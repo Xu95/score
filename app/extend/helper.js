@@ -92,7 +92,7 @@ module.exports = {
       await sendToWormhole(stream);
       throw err;
     }
-    stream.fields.refer = `${target}`.replace(/\\/g,'\\\\\\\\');
+    stream.fields.refer = `${target}`.replace(/\\/g, '\\\\\\\\');
     return stream.fields;
   },
   //多文件上传
@@ -165,5 +165,19 @@ module.exports = {
       console.log('mime: ' + file.mime);
       console.log('tmp filepath: ' + file.filepath);
     }
-  }
+  },
+  async delFile(param) {
+    if (param !== 'null') {
+      let b = param.replace(/\\\\/g, '\\');
+      //if (Fs.existsSync(b)) console.log("this is ok");
+      Fs.exists(b, function (exist) {
+        if (exist) {
+          Fs.unlink(b, function (err) {
+            if (err) throw err;
+            console.log('文件删除成功！');
+          })
+        }
+      })
+    }
+  },
 };

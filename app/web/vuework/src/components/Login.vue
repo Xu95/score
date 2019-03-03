@@ -24,6 +24,7 @@
 
 <script>
   export default {
+    inject: ['reload'],
     data() {
       return {
         logindata: {
@@ -54,6 +55,10 @@
           if(res.data.status === 304){
             this.$router.push({name:'error',params:{errorData:res.data.data}
             })
+          }
+          if(res.data.status === 302){
+            alert('用户名或密码错误');
+            this.reload();
           }
           if (res.data.status === 201) {
             console.log('login succeed!');

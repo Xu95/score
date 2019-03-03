@@ -21,20 +21,9 @@ class ResultService extends Service {
   async delete(taskId, fieldId) {
     const Redis = this.app.redis;
     let aa = await Redis.hget('result', `${taskId}:${fieldId}`);
+    console.log(aa);
     aa = JSON.parse(aa.replace(/'/g, '"'));
-    let b = aa.refer.replace(/\\\\/g, '\\');
-    console.log(b);
-    if (fs.existsSync(aa.refer.replace(/\\\\/g, '\\'))) console.log("this is ok");
-    if (aa.refer !== 'null') {
-      fs.exists(b, function (exist) {
-        if (exist) {
-          fs.unlink(aa.refer.replace(/\\\\/g, '\\'), function (err) {
-            if (err) throw err;
-            console.log('文件删除成功！');
-          })
-        }
-      })
-    }
+    if (aa.refer !== 'null') await this.ctx.helper.delFile(aa.refer);
     let [r1, r2] = await Promise.all([Redis.hdel('result', `${taskId}:${fieldId}`), Redis.hdel('time', `${taskId}:${fieldId}`)]);
     //console.log(`r1:${r1},r2:${r2}`);
     return r1 && r2;
@@ -77,6 +66,13 @@ class ResultService extends Service {
     };
     params = this.ctx.helper.objExtend(params, params2);
     console.log(params);
+    let checkFile = await Redis.hget('result', `${params.task_id}:${params.result_id}`);
+    if (checkFile) {//说明是编辑
+      let ref = JSON.parse(checkFile).refer;
+      if (ref !== 'null' && ref !== params.refer) {
+        await this.ctx.helper.delFile(ref);
+      }
+    }
     let [r1, r2] = await Promise.all([Redis.hset('result', `${params.task_id}:${filedid}`, `${this.ctx.helper.resultValue(params)}`), Redis.hset('time', `${params.task_id}:${filedid}`, `${this.ctx.helper.timeValue(params)}`)]);
     //console.log(`r1:${r1} and r2:${r2}`);
     return ((r1 === 0 || r1 === 1) && (r2 === 0 || r2 === 1));

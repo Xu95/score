@@ -202,7 +202,10 @@
         url: '/api/task/list/0',
         method: 'get',
       }).then((res) => {
-        console.log(res.data);
+        if(res.data.status === 304){
+          this.$router.push({name:'error',params:{errorData:res.data.data}
+          })
+        }
         const tasklist = res.data.data.results;
         for (let i in tasklist) {
           this.taskdata.push({id: i, detail: tasklist[i]});
@@ -258,7 +261,10 @@
           url: '/api/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
         }).then((res) => {
-          //console.log(res.data);
+          if(res.data.status === 304){
+            this.$router.push({name:'error',params:{errorData:res.data.data}
+            })
+          }
           this.taskdata = [];
           const result = res.data.data.results;
           for (let i in result) {

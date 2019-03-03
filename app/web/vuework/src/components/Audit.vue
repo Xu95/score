@@ -135,6 +135,10 @@
         url: '/api/task/list/1',
         method: 'get',
       }).then((res) => {
+        if(res.data.status === 304){
+          this.$router.push({name:'error',params:{errorData:res.data.data}
+          })
+        }
         this.tasklist = res.data.data.results;
         console.log(res.data.data.results);
       }, (err) => {
@@ -166,7 +170,10 @@
             score: this.taskScore
           })
         }).then((res) => {
-          console.log("succeed");
+          if(res.data.status === 304){
+            this.$router.push({name:'error',params:{errorData:res.data.data}
+            })
+          }
         }, (err) => {
           console.log(err);
         });
@@ -183,11 +190,14 @@
           url: '/api/task/detail/' + this.taskId,
           method: 'get',
         }).then((res) => {
+          if(res.data.status === 304){
+            this.$router.push({name:'error',params:{errorData:res.data.data}
+            })
+          }
           this.taskdetail = res.data.data.results;
-          console.log(this.taskdetail);
         }, (err) => {
           console.log(err);
-        })
+        });
         this.dialogVisible = true
       },
 

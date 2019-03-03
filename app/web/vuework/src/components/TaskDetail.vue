@@ -170,7 +170,10 @@
         url: '/api/task/detail/' + this.taskquery.task_id,
         method: 'get',
       }).then((res) => {
-        console.log(res.data);
+        if(res.data.status === 304){
+          this.$router.push({name:'error',params:{errorData:res.data.data}
+          })
+        }
         const result = res.data.data.results;
         for (let i in result) {
           this.taskdetail.push({id: i, detail: result[i]});
@@ -222,7 +225,10 @@
           url: '/api/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
         }).then((res) => {
-          //console.log(res.data);
+          if(res.data.status === 304){
+            this.$router.push({name:'error',params:{errorData:res.data.data}
+            })
+          }
           this.taskdata = [];
           const result = res.data.data.results;
           for (let i in result) {
@@ -248,14 +254,17 @@
         return this.taskquery.applicant_name;
       },
       deleteResult: function (row) {
-        let url = '/api/result/delete/' + this.taskId + '/' + row.detail.result_id;
+        let url = '/api/result/delete/' + this.taskquery.task_id + '/' + row.detail.result_id;
         console.log(url);
         console.log(row);
         this.$axios({
           url: url,
           method: 'get',
         }).then((res) => {
-          //console.log(res.data);
+          if(res.data.status === 304){
+            this.$router.push({name:'error',params:{errorData:res.data.data}
+            })
+          }
         }, (err) => {
           console.log(err);
         });

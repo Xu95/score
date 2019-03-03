@@ -9,10 +9,6 @@ class UserService extends Service {
       status: this.config.number.NO_USE,
       data: {}
     };
-    result.status = this.config.number.DATA_SUCCESS;
-    result.data = {username: params.username};
-    //console.log(result);
-    return result;
     let permmit = await this.userauth(params.username, params.password);
     //r = await this.app.redis.hget('user', id);
     console.log(permmit);
@@ -22,10 +18,11 @@ class UserService extends Service {
       //console.log(r);
       for (let a in r) {
         let b = JSON.parse(r[a].replace(/'/g, '"'));
-        if (b.username === params.username) {
+        if (b.spell === params.username) {
           this.ctx.session.userid = a;
           this.ctx.session.username = b.username;
           this.ctx.session.class = b.class;
+          this.ctx.session.spell = b.spell;
           break;
         }
       }

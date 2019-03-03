@@ -194,7 +194,7 @@
         error: false,
         error1: false,
         check: false,
-        disables: true,
+        disables: false,
         isshow: false,
         index1: '',
         show1: true,
@@ -309,6 +309,10 @@
               time: this.tasks.task_time,
             }
           }).then((res) => {
+            if(res.data.status === 304){
+              this.$router.push({name:'error',params:{errorData:res.data.data}
+              })
+            }
             const task_id = res.data.data.taskid
             console.log("tasksave succeed");
             if (this.arr.length > 0) {
@@ -320,7 +324,10 @@
                   a.result_id = index + 1;
                   a.time_id = index + 1;
                   this.post2(a).then((res) => {
-                    console.log(res);
+                    if(res.data.status === 304){
+                      this.$router.push({name:'error',params:{errorData:res.data.data}
+                      })
+                    }
                   })
                 } else {
                   console.log(" 有文件");
@@ -328,7 +335,10 @@
                   a.append('result_id', index + 1);
                   a.append('time_id', index + 1);
                   this.post1(a).then((res) => {
-                    console.log(res);
+                    if(res.data.status === 304){
+                      this.$router.push({name:'error',params:{errorData:res.data.data}
+                      })
+                    }
                   })
                 }
               }
