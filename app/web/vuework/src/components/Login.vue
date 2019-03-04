@@ -45,7 +45,7 @@
     methods: {
       async login() {
         this.$axios({
-          url: '/api/user/login',
+          url: this.urlAddr+'/user/login',
           method: 'post',
           data: this.qs.stringify({
             username: this.logindata.username,

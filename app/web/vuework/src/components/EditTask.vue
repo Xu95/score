@@ -218,10 +218,10 @@
       }
     },
     mounted: function () {
-      let url = '/api/task/detail/' + this.taskId;
+      let url = this.urlAddr+'/task/detail/' + this.taskId;
       console.log(url);
       this.$axios({
-        url: '/api/task/detail/' + this.tasks.task_id,
+        url: this.urlAddr+'/task/detail/' + this.tasks.task_id,
         method: 'get',
       }).then((res) => {
         if (res.data.status === 304) {
@@ -318,7 +318,7 @@
           processData: false,
           // dataType: "html",//返回整合HTML
           // dataType: "json",//返回json格式设置
-          url: '/api/result/edit',
+          url: this.urlAddr+'/result/edit',
           method: 'post',
           data: data,
         })
@@ -330,7 +330,7 @@
           //processData: false,
           // dataType: "html",//返回整合HTML
           // dataType: "json",//返回json格式设置
-          url: '/api/result/edit',
+          url: this.urlAddr+'/result/edit',
           method: 'post',
           data: data,
         })
@@ -340,7 +340,7 @@
           event.preventDefault();
           if (this.tasks.task_name !== this.taskquery.task_name || this.tasks.task_time !== this.taskquery.time) {
             this.$axios({
-              url: '/api/task/edit',
+              url: this.urlAddr+'/task/edit',
               method: 'post',
               data: {
                 task_id: this.tasks.task_id,
@@ -362,7 +362,7 @@
           if (this.delresult.length > 0) {
             for (let a in this.delresult) {
               console.log(a);
-              let url = '/api/result/delete/' + this.delresult[a].data.task_id + '/' + this.delresult[a].data.result_id;
+              let url = this.urlAddr+'/result/delete/' + this.delresult[a].data.task_id + '/' + this.delresult[a].data.result_id;
               console.log(url);
               this.$axios({
                 url: url,

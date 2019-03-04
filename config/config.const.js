@@ -23,8 +23,8 @@ exports.globalConst = {
   /*
   审计相关
    */
-  auditName: '李潼',
-  auditId: '1',
+  auditName: '余盛季',
+  auditId: '0001',
   /*
   上传文件路径
    */

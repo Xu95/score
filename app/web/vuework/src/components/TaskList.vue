@@ -202,7 +202,7 @@
     },
     created: function () {
       this.$axios({
-        url: '/api/task/list/0',
+        url: this.urlAddr+'/task/list/0',
         method: 'get',
       }).then((res) => {
         if (res.data.status === 304) {
@@ -262,10 +262,10 @@
       timeSearch(t1, t2) {
         if(!t1) t1 = '2000-01-01';
         if(!t2) t2 = '2100-01-01';
-        let url = '/api/task/timeSearch/' + t1 + '/' + t2;
+        let url = this.urlAddr+'/task/timeSearch/' + t1 + '/' + t2;
         console.log(url);
         this.$axios({
-          url: '/api/task/timeSearch/' + t1 + '/' + t2,
+          url: this.urlAddr+'/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
         }).then((res) => {
           if (res.data.status === 304) {

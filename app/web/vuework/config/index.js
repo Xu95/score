@@ -55,12 +55,12 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    index: path.resolve(__dirname, '../../../view/vue.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
-    assetsPublicPath: './',
+    assetsRoot: path.resolve(__dirname, '../../../public'),
+    assetsSubDirectory: 'vueasset',
+    assetsPublicPath: '../public/',
 
     /**
      * Source Maps

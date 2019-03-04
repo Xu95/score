@@ -173,10 +173,10 @@
       let check = this.$route.params.score;
       console.log(`the socre : ${this.$route.params.score}`);
       if (this.name.loginuser === this.taskquery.applicant_name && check === '0') this.flag = true;
-      let url = '/api/task/detail/' + this.taskId;
+      let url = this.urlAddr+'/task/detail/' + this.taskId;
       console.log(url);
       this.$axios({
-        url: '/api/task/detail/' + this.taskquery.task_id,
+        url: this.urlAddr+'/task/detail/' + this.taskquery.task_id,
         method: 'get',
       }).then((res) => {
         if (res.data.status === 304) {
@@ -229,10 +229,10 @@
       }
       ,
       timeSearch(t1, t2) {
-        let url = '/api/task/timeSearch/' + t1 + '/' + t2;
+        let url = this.urlAddr+'/task/timeSearch/' + t1 + '/' + t2;
         console.log(url);
         this.$axios({
-          url: '/api/task/timeSearch/' + t1 + '/' + t2,
+          url: this.urlAddr+'/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
         }).then((res) => {
           if (res.data.status === 304) {
@@ -265,7 +265,7 @@
         return this.taskquery.applicant_name;
       },
       deleteResult: function (row) {
-        let url = '/api/result/delete/' + this.taskquery.task_id + '/' + row.detail.result_id;
+        let url = this.urlAddr+'/result/delete/' + this.taskquery.task_id + '/' + row.detail.result_id;
         console.log(url);
         console.log(row);
         this.$axios({

@@ -284,7 +284,7 @@
           processData: false,
           // dataType: "html",//返回整合HTML
           // dataType: "json",//返回json格式设置
-          url: '/api/result/edit',
+          url: this.urlAddr+'/result/edit',
           method: 'post',
           data: data,
         })
@@ -296,7 +296,7 @@
           //processData: false,
           // dataType: "html",//返回整合HTML
           // dataType: "json",//返回json格式设置
-          url: '/api/result/edit',
+          url: this.urlAddr+'/result/edit',
           method: 'post',
           data: data,
         })
@@ -305,7 +305,7 @@
         if (!(this.save.result_name) && !(this.save.result_detail) && !(this.save.hour) && !(this.save.time_detail)) {
           event.preventDefault();
           this.$axios({
-            url: '/api/task/increase',
+            url: this.urlAddr+'/task/increase',
             method: 'post',
             data: {
               task_name: this.tasks.task_name,

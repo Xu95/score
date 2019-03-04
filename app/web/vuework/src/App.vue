@@ -14,7 +14,7 @@
     },
     data(){
       return {
-        isRouterAlive : true
+        isRouterAlive : true,
       }
     },
     methods: {

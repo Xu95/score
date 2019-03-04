@@ -132,7 +132,7 @@
     //提前加载数据 未审批的任务的详细信息
     created: function () {
       this.$axios({
-        url: '/api/task/list/1',
+        url: this.urlAddr+'/task/list/1',
         method: 'get',
       }).then((res) => {
         if(res.data.status === 304){
@@ -163,7 +163,7 @@
         console.log(this.taskId);
         console.log(this.taskScore);
         this.$axios({
-          url: '/api/audit/score',
+          url: this.urlAddr+'/audit/score',
           method: 'post',
           data: this.qs.stringify({
             task_id: this.taskId,
@@ -187,7 +187,7 @@
         this.dialogdata = row;
         this.taskId = row.task_id;
         await this.$axios({
-          url: '/api/task/detail/' + this.taskId,
+          url: this.urlAddr+'/task/detail/' + this.taskId,
           method: 'get',
         }).then((res) => {
           if(res.data.status === 304){

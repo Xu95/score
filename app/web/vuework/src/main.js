@@ -16,7 +16,7 @@ Vue.use(ElementUI)
 Vue.use(VueResource)
 Vue.prototype.$axios=axios
 Vue.prototype.qs=qs
-
+Vue.prototype.urlAddr = '';
 //路由验证 用户登录后可以跳转 否则自动跳转至登录界面
 router.beforeEach((to,from,next) => {
   var userInfo = sessionStorage.getItem('username')
