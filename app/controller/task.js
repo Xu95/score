@@ -93,7 +93,7 @@ class TaskController extends Controller {
     let param = this.ctx.request.body;
     const userid = this.ctx.session.userid;
     const score = '0';
-    param = this.ctx.helper.objExtend(param, {userid: userid, score: score});
+    param = this.ctx.helper.objExtend(param, {user_id: userid, score: score});
     console.log(param);
     let r;
     try {

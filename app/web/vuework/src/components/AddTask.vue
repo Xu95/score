@@ -309,8 +309,9 @@
               time: this.tasks.task_time,
             }
           }).then((res) => {
-            if(res.data.status === 304){
-              this.$router.push({name:'error',params:{errorData:res.data.data}
+            if (res.data.status === 304) {
+              this.$router.push({
+                name: 'error', params: {errorData: res.data.data}
               })
             }
             const task_id = res.data.data.taskid
@@ -324,8 +325,9 @@
                   a.result_id = index + 1;
                   a.time_id = index + 1;
                   this.post2(a).then((res) => {
-                    if(res.data.status === 304){
-                      this.$router.push({name:'error',params:{errorData:res.data.data}
+                    if (res.data.status === 304) {
+                      this.$router.push({
+                        name: 'error', params: {errorData: res.data.data}
                       })
                     }
                   })
@@ -335,8 +337,9 @@
                   a.append('result_id', index + 1);
                   a.append('time_id', index + 1);
                   this.post1(a).then((res) => {
-                    if(res.data.status === 304){
-                      this.$router.push({name:'error',params:{errorData:res.data.data}
+                    if (res.data.status === 304) {
+                      this.$router.push({
+                        name: 'error', params: {errorData: res.data.data}
                       })
                     }
                   })

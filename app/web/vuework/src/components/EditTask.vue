@@ -339,6 +339,7 @@
               url: '/api/task/edit',
               method: 'post',
               data: {
+                task_id: this.tasks.task_id,
                 task_name: this.tasks.task_name,
                 time: this.tasks.task_time,
                 user_name: this.name.loginuser,

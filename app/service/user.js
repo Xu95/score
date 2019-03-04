@@ -11,18 +11,18 @@ class UserService extends Service {
     };
     let permmit = await this.userauth(params.username, params.password);
     //r = await this.app.redis.hget('user', id);
-    console.log(permmit);
+    console.log(`permmit is ${permmit}`);
     if (permmit === 1) {
       let r;
       r = await this.app.redis.hgetall('user');
       //console.log(r);
       for (let a in r) {
         let b = JSON.parse(r[a].replace(/'/g, '"'));
-        if (b.spell === params.username) {
+        if (b.username === params.username) {
           this.ctx.session.userid = a;
           this.ctx.session.username = b.username;
           this.ctx.session.class = b.class;
-          this.ctx.session.spell = b.spell;
+         // this.ctx.session.spell = b.spell;
           break;
         }
       }
@@ -38,6 +38,7 @@ class UserService extends Service {
           this.ctx.session.class = '0';
         }
       }
+      return true;
       //r = JSON.parse(r.replace(/'/g, '"'));
     } else {
       return false;

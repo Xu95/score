@@ -13,6 +13,7 @@ class UserController extends Controller {
     let params = this.ctx.request.body;//params-- / ; query-- ?
     try {
       const permmit = await this.service.user.login(params);
+      console.log(permmit);
       if (!permmit) {
         result = {
           status: this.config.number.PARAM_ERROR,

@@ -85,7 +85,7 @@ class TaskService extends Service {
     if (r1.length !== r2.length) throw "form /service/task/detail.result table can not match time table";
     for (let i = 0; i < r1.length; i++) {
       //console.log(r1[i]);
-      const a =JSON.parse(r1[i]);
+      const a = JSON.parse(r1[i]);
       //console.log(r2[i]);
       const b = JSON.parse(r2[i]);
       const typeid = b.typeid;
@@ -93,7 +93,7 @@ class TaskService extends Service {
         result_name: a.resultname,
         result_id: a.resultid,
         result_detail: a.resultdetail,
-        refer: a.refer.replace(/\\\\/g,'\\'),
+        refer: a.refer.replace(/\\\\/g, '\\'),
         score: task1.score,
         hour: b.hour,
         type_id: typeid,
@@ -109,19 +109,16 @@ class TaskService extends Service {
 
   async increase(params) {
     const Redis = this.app.redis;
-    let r = await Redis.hgetall('user');
-    for (let a in r) {
-      let b = JSON.parse(r[a].replace(/'/g, '"'));
-      if (b.username === params.user_name) params.user_id = a;
-    }
+    params.user_id = this.ctx.session.userid;
     params.time = params.time.substr(0, 10);
-    //console.log(params);
+    console.log(params);
     let maxNum = await Redis.hlen('task');
     let result = await Redis.hset('task', `${maxNum + 1}`, `${this.ctx.helper.taskValue(params)}`);
     if (result) return maxNum + 1;
   }
 
   async edit(params) {
+    params.time = params.time.substr(0, 10);
     let result = await this.app.redis.hset('task', `${params.task_id}`, `${this.ctx.helper.taskValue(params)}`);
     return result === 0 || result === 1;
   }
