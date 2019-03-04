@@ -60,10 +60,10 @@
             alert('用户名或密码错误');
             this.reload();
           }
-          if (res.data.status === 201) {
+          if (res.data.status === 202) {
             console.log('login succeed!');
             const Data = {
-              loginuser: this.logindata.username
+              loginuser: res.data.data.username,
             };
             sessionStorage.setItem('username', JSON.stringify(Data));
             console.log('设置缓存完毕');

@@ -153,11 +153,16 @@
         dialogVisible2: false,
         dialogVisible3: false,
         flag: false,
-        disables: false,
+        disables: true,
         newtask: {
           name: '',
           starttime: '',
         }
+      }
+    },
+    created: function () {
+      if (this.name.loginuser == "余盛季") {
+        this.disables = false;
       }
     },
     mounted: function () {

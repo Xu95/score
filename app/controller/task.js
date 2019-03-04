@@ -29,6 +29,7 @@ class TaskController extends Controller {
     const {start_time, end_time} = this.ctx.params;
     let r;
     try {
+      //console.log(`stime : ${start_time} etime :${end_time}`);
       r = await this.service.task.timeSearch(start_time, end_time);
     } catch (e) {
       this.ctx.helper.erroDeal(e, 'TaskController/timeSearch');
@@ -41,7 +42,7 @@ class TaskController extends Controller {
       this.result.status = this.config.number.NO_DATA_ERROR;
       this.result.data = {};
     }
-    console.log(this.result.data.results);
+    //console.log(this.result.data.results);
     this.ctx.body = this.result;
   }
 
@@ -84,7 +85,7 @@ class TaskController extends Controller {
       this.result.status = this.config.number.PARAM_ERROR;
       this.result.data = {};
     }
-    console.log(this.result.data);
+    //console.log(this.result.data);
     this.ctx.body = this.result;
   }
 
@@ -94,7 +95,7 @@ class TaskController extends Controller {
     const userid = this.ctx.session.userid;
     const score = '0';
     param = this.ctx.helper.objExtend(param, {user_id: userid, score: score});
-    console.log(param);
+    //console.log(param);
     let r;
     try {
       r = await this.service.task.edit(param);

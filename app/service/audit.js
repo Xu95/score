@@ -4,12 +4,12 @@ const Service = require('egg').Service;
 
 class AuditService extends Service {
   async score(params) {
-    console.log(params);
+    //console.log(params);
     let r1 = await this.app.redis.hget('task', `${params.task_id}`);
-    console.log(r1);
+    //console.log(r1);
     if (!r1) return false;
     r1 = JSON.parse(r1.replace(/'/g, '"'));
-    console.log(r1);
+    //console.log(r1);
     const param = {
       task_name: r1.taskname,
       user_id: r1.userid,

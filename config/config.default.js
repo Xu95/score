@@ -28,5 +28,13 @@ module.exports = appInfo => {
       enable: false,
     }
   };
+  config.multipart = {
+    // will append to whilelist
+    fileExtensions: [
+      '.txt',
+      '.doc',
+      '.docx',
+    ],
+  };
   return config;
 };

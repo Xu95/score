@@ -9,11 +9,16 @@ const readF = util.promisify(Fs.readFile);
 class UserController extends Controller {
   async login() {
     //console.log(this.ctx.cookies.get('csrfToken'));
+    this.ctx.session.userid = '';
+    this.ctx.session.userid = '';
+    this.ctx.session.username = '';
+    this.ctx.session.class = '';
+    this.ctx.session.spell = '';
     let result;
     let params = this.ctx.request.body;//params-- / ; query-- ?
     try {
+      //console.log(params);
       const permmit = await this.service.user.login(params);
-      console.log(permmit);
       if (!permmit) {
         result = {
           status: this.config.number.PARAM_ERROR,
@@ -21,8 +26,8 @@ class UserController extends Controller {
         }
       } else {
         result = {
-          status: this.config.number.NO_DATA_SUCCESS,
-          data: {},
+          status: this.config.number.DATA_SUCCESS,
+          data: {username:this.ctx.session.username},
         }
       }
       //userpage = await readF(Path.resolve(__dirname, '../view/list.html'));
@@ -30,6 +35,7 @@ class UserController extends Controller {
       this.ctx.helper.erroDeal(e, 'UserController/login');
       return
     }
+    //console.log(this.ctx.session.username);
     this.ctx.body = result;
   }
 

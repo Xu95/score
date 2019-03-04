@@ -194,10 +194,15 @@
         error: false,
         error1: false,
         check: false,
-        disables: false,
+        disables: true,
         isshow: false,
         index1: '',
         show1: true,
+      }
+    },
+    created: function () {
+      if (this.name.loginuser == "余盛季") {
+        this.disables = false;
       }
     },
     methods: {

@@ -57,7 +57,7 @@ class TaskService extends Service {
       b.applicant_name = JSON.parse(res.replace(/'/g, '"')).username;
       b.task_id = a;
       if (startTime <= b.time && b.time <= endTime) {
-        console.log(b.time);
+        //console.log(b.time);
         result.push(b);
       }
     }
@@ -111,7 +111,7 @@ class TaskService extends Service {
     const Redis = this.app.redis;
     params.user_id = this.ctx.session.userid;
     params.time = params.time.substr(0, 10);
-    console.log(params);
+    //console.log(params);
     let maxNum = await Redis.hlen('task');
     let result = await Redis.hset('task', `${maxNum + 1}`, `${this.ctx.helper.taskValue(params)}`);
     if (result) return maxNum + 1;

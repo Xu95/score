@@ -201,7 +201,7 @@
         error: false,
         error1: false,
         check: false,
-        disables: false,
+        disables: true,
         isshow: false,
         index1: '',
         show1: true,
@@ -213,6 +213,9 @@
       this.tasks.task_time = this.$route.params.time;
       this.taskquery.task_name = this.tasks.task_name;
       this.taskquery.time = this.tasks.task_time;
+      if (this.name.loginuser == "余盛季") {
+        this.disables = false;
+      }
     },
     mounted: function () {
       let url = '/api/task/detail/' + this.taskId;
@@ -221,8 +224,9 @@
         url: '/api/task/detail/' + this.tasks.task_id,
         method: 'get',
       }).then((res) => {
-        if(res.data.status === 304){
-          this.$router.push({name:'error',params:{errorData:res.data.data}
+        if (res.data.status === 304) {
+          this.$router.push({
+            name: 'error', params: {errorData: res.data.data}
           })
         }
         console.log(res.data);
@@ -346,8 +350,9 @@
                 score: '0',
               }
             }).then((res) => {
-              if(res.data.status === 304){
-                this.$router.push({name:'error',params:{errorData:res.data.data}
+              if (res.data.status === 304) {
+                this.$router.push({
+                  name: 'error', params: {errorData: res.data.data}
                 })
               }
             }).catch((err) => {
@@ -363,8 +368,9 @@
                 url: url,
                 method: 'get',
               }).then((res) => {
-                if(res.data.status === 304){
-                  this.$router.push({name:'error',params:{errorData:res.data.data}
+                if (res.data.status === 304) {
+                  this.$router.push({
+                    name: 'error', params: {errorData: res.data.data}
                   })
                 }
               }, (err) => {
@@ -384,8 +390,9 @@
                   console.log(" 没有文件");
                   a.data.task_id = task_id;
                   this.post2(a.data).then((res) => {
-                    if(res.data.status === 304){
-                      this.$router.push({name:'error',params:{errorData:res.data.data}
+                    if (res.data.status === 304) {
+                      this.$router.push({
+                        name: 'error', params: {errorData: res.data.data}
                       })
                     }
                   })
@@ -393,8 +400,9 @@
                   console.log(" 有文件");
                   a.data.append('task_id', task_id);
                   this.post1(a.data).then((res) => {
-                    if(res.data.status === 304){
-                      this.$router.push({name:'error',params:{errorData:res.data.data}
+                    if (res.data.status === 304) {
+                      this.$router.push({
+                        name: 'error', params: {errorData: res.data.data}
                       })
                     }
                   })
@@ -406,8 +414,9 @@
                   console.log(" 没有文件");
                   a.data.task_id = task_id;
                   this.post2(a.data).then((res) => {
-                    if(res.data.status === 304){
-                      this.$router.push({name:'error',params:{errorData:res.data.data}
+                    if (res.data.status === 304) {
+                      this.$router.push({
+                        name: 'error', params: {errorData: res.data.data}
                       })
                     }
                   })
@@ -415,8 +424,9 @@
                   console.log(" 有文件");
                   a.data.append('task_id', task_id);
                   this.post1(a.data).then((res) => {
-                    if(res.data.status === 304){
-                      this.$router.push({name:'error',params:{errorData:res.data.data}
+                    if (res.data.status === 304) {
+                      this.$router.push({
+                        name: 'error', params: {errorData: res.data.data}
                       })
                     }
                   })

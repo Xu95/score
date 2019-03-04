@@ -1,0 +1,26 @@
+172.20.156.219
+172.20.156.217
+
+sca是无缝，lca是linux
+sdu是spice
+
+http://172.20.12.1/cos/ui/index.php
+ admin sinocloud@028
+
+
+登录的客户端ip：172.20.156.218  端口 ：80  用户名：admin 密码：111111
+ssh 连接172.20.156.218 用户名：root 密码：111111
+/var/cos/cvm/iso/
+
+http://172.20.12.1/cos/ui/index.php
+admin  sinocloud@028
+
+http://172.20.12.1/owncloud/index.php/apps/files/?dir=%2Farchive%2F3.8.8
+cac  owncloudcac
+
+172.20.1.1
+admin h3ch3ch3c
+
+navicat连接远程数据库：root与数据库root的密码要一致
+
+###注释要去掉！！！！理清顺序！！！

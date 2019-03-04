@@ -21,7 +21,7 @@ class ResultService extends Service {
   async delete(taskId, fieldId) {
     const Redis = this.app.redis;
     let aa = await Redis.hget('result', `${taskId}:${fieldId}`);
-    console.log(aa);
+    //console.log(aa);
     aa = JSON.parse(aa.replace(/'/g, '"'));
     if (aa.refer !== 'null') await this.ctx.helper.delFile(aa.refer);
     let [r1, r2] = await Promise.all([Redis.hdel('result', `${taskId}:${fieldId}`), Redis.hdel('time', `${taskId}:${fieldId}`)]);
@@ -65,7 +65,7 @@ class ResultService extends Service {
       time_id: `${filedid}`,
     };
     params = this.ctx.helper.objExtend(params, params2);
-    console.log(params);
+    //console.log(params);
     let checkFile = await Redis.hget('result', `${params.task_id}:${params.result_id}`);
     if (checkFile) {//说明是编辑
       let ref = JSON.parse(checkFile).refer;

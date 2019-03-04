@@ -33,13 +33,16 @@
                 <el-table :data="taskdata" :default-sort="{prop: 'id', order: 'descending'}" width="100%">
                     <el-table-column prop="id" label="编号" min-width="9%" sortable :sort-method="sortById">
                     </el-table-column>
-                    <el-table-column prop="detail.taskname" label="任务名称" min-width="25%" sortable :sort-method="sortByName">
+                    <el-table-column prop="detail.taskname" label="任务名称" min-width="25%" sortable
+                                     :sort-method="sortByName">
                     </el-table-column>
-                    <el-table-column prop="detail.applicant_name" label="申请人" min-width="11%" sortable :sort-method="sortByApplicant">
+                    <el-table-column prop="detail.applicant_name" label="申请人" min-width="11%" sortable
+                                     :sort-method="sortByApplicant">
                     </el-table-column>
                     <el-table-column prop="detail.time" label="启动时间" min-width="15%" sortable :sort-method="sortByTime">
                     </el-table-column>
-                    <el-table-column prop="detail.score" label="评分" min-width="12%" :formatter="changescore" :sort-method="sortByScore">
+                    <el-table-column prop="detail.score" label="评分" min-width="12%" :formatter="changescore"
+                                     :sort-method="sortByScore">
                     </el-table-column>
                     <el-table-column property="status" label="功能区" min-width="13%">
                         <template slot-scope="scope">
@@ -202,8 +205,9 @@
         url: '/api/task/list/0',
         method: 'get',
       }).then((res) => {
-        if(res.data.status === 304){
-          this.$router.push({name:'error',params:{errorData:res.data.data}
+        if (res.data.status === 304) {
+          this.$router.push({
+            name: 'error', params: {errorData: res.data.data}
           })
         }
         const tasklist = res.data.data.results;
@@ -214,7 +218,7 @@
         console.log(err);
       });
       var name = JSON.parse(sessionStorage.getItem('username'));
-      if (name.loginuser == "litong") {
+      if (name.loginuser == "余盛季") {
         this.disables = false;
       }
     },
@@ -242,12 +246,12 @@
         let url = 'TaskDetail';
         this.$router.replace({
           name: url,
-          params:{
-            task_id:row.detail.task_id,
-            applicant_name:row.detail.applicant_name,
-            task_name:row.detail.taskname,
-            time:row.detail.time,
-            score:row.detail.score,
+          params: {
+            task_id: row.detail.task_id,
+            applicant_name: row.detail.applicant_name,
+            task_name: row.detail.taskname,
+            time: row.detail.time,
+            score: row.detail.score,
           }
         })
       },
@@ -256,14 +260,17 @@
         this.$router.replace('/addTask');
       },
       timeSearch(t1, t2) {
+        if(!t1) t1 = '2000-01-01';
+        if(!t2) t2 = '2100-01-01';
         let url = '/api/task/timeSearch/' + t1 + '/' + t2;
         console.log(url);
         this.$axios({
           url: '/api/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
         }).then((res) => {
-          if(res.data.status === 304){
-            this.$router.push({name:'error',params:{errorData:res.data.data}
+          if (res.data.status === 304) {
+            this.$router.push({
+              name: 'error', params: {errorData: res.data.data}
             })
           }
           this.taskdata = [];
@@ -284,27 +291,27 @@
         console.log(name);
         return name;
       },
-      sortByName:function (obj1,obj2) {
+      sortByName: function (obj1, obj2) {
         let v1 = obj1.detail.taskname;
         let v2 = obj2.detail.taskname;
-        return v1-v2;
+        return v1 - v2;
       },
-      sortByApplicant:function (obj1,obj2) {
+      sortByApplicant: function (obj1, obj2) {
         let v1 = obj1.detail.applicant_name;
         let v2 = obj2.detail.applicant_name;
-        return v1-v2;
+        return v1 - v2;
       },
-      sortByTime:function (obj1,obj2) {
+      sortByTime: function (obj1, obj2) {
         let v1 = obj1.detail.time;
         let v2 = obj2.detail.time;
         return v1 - v2;
       },
-      sortById:function (obj1,obj2) {
+      sortById: function (obj1, obj2) {
         let v1 = obj1.id;
         let v2 = obj2.id;
         return v1 - v2;
       },
-      sortByScore:function (obj1,obj2) {
+      sortByScore: function (obj1, obj2) {
         let v1 = obj1.detail.score;
         let v2 = obj2.detail.score;
         return v1 - v2;

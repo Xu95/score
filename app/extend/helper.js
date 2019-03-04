@@ -11,7 +11,7 @@ const multiparty = require('multiparty');
 
 module.exports = {
   userValue(params) {
-    return `{"username":"${params.user_name}","class":"${params.class}"}`;
+    return `{"username":"${params.username}","class":"${params.class}","spell":"${params.spell}" }`;
   },
   taskValue(params) {
     return `{"taskname":"${params.task_name}","userid":"${params.user_id}","time":"${params.time}","score":"${params.score}"}`;
@@ -28,6 +28,14 @@ module.exports = {
         a[p] = b[p];
     }
     return a;
+  },
+  writeUser() {
+    let res;
+    let data = Fs.readFileSync('./user.json');
+    let person = data.toString();//将二进制的数据转换为字符串
+    person = JSON.parse(person);//将字符串转换为json对象
+    res = person.RECORDS;
+    return res;
   },
   ldapsearch(client, opts) {
     return new Promise((resolve, reject) => {
@@ -76,6 +84,7 @@ module.exports = {
     }
     const uplaodBasePath = this.config.globalConst.uploadPath;
     // 生成文件名
+    //console.log(stream.filename);
     const filename = this.ctx.session.username + '-' + Number.parseInt(Math.random() * 10000) + Path.extname(stream.filename);
     // 生成文件夹
     const dirName = this.formatTime();

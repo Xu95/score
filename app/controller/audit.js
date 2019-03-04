@@ -55,7 +55,7 @@ class AuditController extends Controller {
       this.result.status = this.config.number.NO_DATA_ERROR;
       this.result.data = {role: '1', results: []};
     }
-    console.log(this.result.data);
+    //console.log(this.result.data);
     this.ctx.body = this.result;
   }
 }
