@@ -188,7 +188,7 @@
             {required: true, message: '请输入描述', trigger: 'blur'},
           ],
         },
-        refer: '',
+        refer: [],
         show: false,
         gainshow: false,
         error: false,
@@ -201,7 +201,7 @@
       }
     },
     created: function () {
-      if (this.name.loginuser == "余盛季") {
+      if (this.name.loginuser === this.auditName) {
         this.disables = false;
       }
     },
@@ -223,7 +223,7 @@
       uploadfile(file) {
         console.log("uploadfile", file)
         const _file = file.file;
-        this.refer = _file;
+        this.refer.push(_file);
       },
       savegain() {
         if (this.save.result_name && this.save.result_detail && this.save.hour && this.save.time_detail) {
@@ -232,11 +232,13 @@
           event.preventDefault();
           //this.refer = this.$refs.abc.value;
           let formData;
-          let formData1;
+          console.log("1111");
           console.log(this.refer);
-          if (this.refer) {
+          if (this.refer.length !== 0) {
             formData = new FormData();
-            formData.append("myfile1", this.refer);
+            for(let a in this.refer){
+              formData.append("myfile"+a, this.refer[a]);
+            }
             formData.append('result_name', this.save.result_name);
             formData.append('result_detail', this.save.result_detail);
             formData.append('hour', this.save.hour);
@@ -258,7 +260,7 @@
           }
           this.arr.push(formData);
           this.$refs.abc.value = '';
-          this.refer = '';
+          this.refer = [];
           this.save = [{
             result_name: '',
             result_detail: '',
@@ -284,7 +286,7 @@
           processData: false,
           // dataType: "html",//返回整合HTML
           // dataType: "json",//返回json格式设置
-          url: this.urlAddr+'/result/edit',
+          url: this.urlAddr + '/result/edit',
           method: 'post',
           data: data,
         })
@@ -296,7 +298,7 @@
           //processData: false,
           // dataType: "html",//返回整合HTML
           // dataType: "json",//返回json格式设置
-          url: this.urlAddr+'/result/edit',
+          url: this.urlAddr + '/result/edit',
           method: 'post',
           data: data,
         })
@@ -305,7 +307,7 @@
         if (!(this.save.result_name) && !(this.save.result_detail) && !(this.save.hour) && !(this.save.time_detail)) {
           event.preventDefault();
           this.$axios({
-            url: this.urlAddr+'/task/increase',
+            url: this.urlAddr + '/task/increase',
             method: 'post',
             data: {
               task_name: this.tasks.task_name,
@@ -361,7 +363,7 @@
       },
       addResult() {
         if (this.tasks.task_name && this.tasks.task_time) {
-          this.refer = '';
+          this.refer = [];
           this.show = true;
           this.error = false;
           this.show1 = false;
@@ -398,8 +400,6 @@
             type_id: item.get('type_id'),
             type_name: item.get('type_name'),
           };
-          this.refer = item.get('myfile1');
-          console.log(this.refer);
         }
         this.index1 = this.arr.indexOf(item);
         this.isshow = true;
@@ -427,9 +427,11 @@
           event.preventDefault();
           let formData;
           console.log(this.refer);
-          if (this.refer) {
+          if (this.refer.length !== 0) {
             formData = new FormData();
-            formData.append("myfile1", this.refer);
+            for(let a in this.refer){
+              formData.append("myfile"+a, this.refer[a]);
+            }
             formData.append('result_name', this.save.result_name);
             formData.append('result_detail', this.save.result_detail);
             formData.append('hour', this.save.hour);
@@ -450,7 +452,7 @@
             }
           }
           this.arr[this.index] = formData;
-          this.refer = '';
+          this.refer = [];
           this.save = [{
             result_name: '',
             result_detail: '',

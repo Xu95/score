@@ -44,19 +44,21 @@
     },
     methods: {
       async login() {
+        //console.log(`username: ${this.logindata.username} password: ${this.logindata.password}`);
         this.$axios({
-          url: this.urlAddr+'/user/login',
+          url: this.urlAddr + '/user/login',
           method: 'post',
-          data: this.qs.stringify({
+          data: {
             username: this.logindata.username,
             password: this.logindata.password,
-          })
+          }
         }).then((res) => {
-          if(res.data.status === 304){
-            this.$router.push({name:'error',params:{errorData:res.data.data}
+          if (res.data.status === 304) {
+            this.$router.push({
+              name: 'error', params: {errorData: res.data.data}
             })
           }
-          if(res.data.status === 302){
+          if (res.data.status === 302) {
             alert('用户名或密码错误');
             this.reload();
           }

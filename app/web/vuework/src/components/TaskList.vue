@@ -218,7 +218,7 @@
         console.log(err);
       });
       var name = JSON.parse(sessionStorage.getItem('username'));
-      if (name.loginuser == "余盛季") {
+      if (name.loginuser === this.auditName) {
         this.disables = false;
       }
     },

@@ -44,8 +44,9 @@ class ResultController extends Controller {
     try {
       if (this.ctx.request.body.hasOwnProperty('refer')) {
         param = this.ctx.request.body;
+        if (param.refer !== null) param.refer = param.refer.replace(/\\/g, '\\\\\\\\');
       } else {
-        param = await this.ctx.helper.upload();
+        param = await this.ctx.helper.upload2();
       }
       //param = await this.ctx.helper.upload2();
       //console.log(param);

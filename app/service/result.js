@@ -69,7 +69,8 @@ class ResultService extends Service {
     let checkFile = await Redis.hget('result', `${params.task_id}:${params.result_id}`);
     if (checkFile) {//说明是编辑
       let ref = JSON.parse(checkFile).refer;
-      if (ref !== 'null' && ref !== params.refer) {
+      //console.log(`ref: ${ref} and refer: ${params.refer}`);
+      if (ref !== 'null' && ref.replace(/\\\\/g,'\\\\\\\\') !== params.refer) {
         await this.ctx.helper.delFile(ref);
       }
     }

@@ -152,7 +152,7 @@
         dialogVisible1: false,
         dialogVisible2: false,
         dialogVisible3: false,
-        flag: false,
+        flag: true,
         disables: true,
         newtask: {
           name: '',
@@ -161,7 +161,7 @@
       }
     },
     created: function () {
-      if (this.name.loginuser == "余盛季") {
+      if (this.name.loginuser === this.auditName) {
         this.disables = false;
       }
     },
@@ -172,11 +172,11 @@
       this.taskquery.time = this.$route.params.time;
       let check = this.$route.params.score;
       console.log(`the socre : ${this.$route.params.score}`);
-      if (this.name.loginuser === this.taskquery.applicant_name && check === '0') this.flag = true;
-      let url = this.urlAddr+'/task/detail/' + this.taskId;
+      if (this.name.loginuser !== this.taskquery.applicant_name || check !== '0') this.flag = false;
+      let url = this.urlAddr + '/task/detail/' + this.taskId;
       console.log(url);
       this.$axios({
-        url: this.urlAddr+'/task/detail/' + this.taskquery.task_id,
+        url: this.urlAddr + '/task/detail/' + this.taskquery.task_id,
         method: 'get',
       }).then((res) => {
         if (res.data.status === 304) {
@@ -229,10 +229,10 @@
       }
       ,
       timeSearch(t1, t2) {
-        let url = this.urlAddr+'/task/timeSearch/' + t1 + '/' + t2;
+        let url = this.urlAddr + '/task/timeSearch/' + t1 + '/' + t2;
         console.log(url);
         this.$axios({
-          url: this.urlAddr+'/task/timeSearch/' + t1 + '/' + t2,
+          url: this.urlAddr + '/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
         }).then((res) => {
           if (res.data.status === 304) {
@@ -265,22 +265,24 @@
         return this.taskquery.applicant_name;
       },
       deleteResult: function (row) {
-        let url = this.urlAddr+'/result/delete/' + this.taskquery.task_id + '/' + row.detail.result_id;
-        console.log(url);
-        console.log(row);
-        this.$axios({
-          url: url,
-          method: 'get',
-        }).then((res) => {
-          if (res.data.status === 304) {
-            this.$router.push({
-              name: 'error', params: {errorData: res.data.data}
-            })
-          }
-        }, (err) => {
-          console.log(err);
-        });
-        this.reload();
+        if (confirm('确认删除此成果吗') === true) {
+          let url = this.urlAddr + '/result/delete/' + this.taskquery.task_id + '/' + row.detail.result_id;
+          console.log(url);
+          console.log(row);
+          this.$axios({
+            url: url,
+            method: 'get',
+          }).then((res) => {
+            if (res.data.status === 304) {
+              this.$router.push({
+                name: 'error', params: {errorData: res.data.data}
+              })
+            }
+          }, (err) => {
+            console.log(err);
+          });
+          this.reload();
+        }
       },
       renameRefer: function (row) {
         if (row.detail.refer === 'null') return '无文件';

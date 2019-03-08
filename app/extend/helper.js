@@ -74,7 +74,7 @@ module.exports = {
     this.ctx.body = res;
   },
   async upload() {
-    console.log('this is upload');
+    //console.log('this is upload');
     let stream = await this.ctx.getFileStreamWithoutFileNotFoundError();
     //console.log(stream);
     if (!stream.filename) {
@@ -82,6 +82,7 @@ module.exports = {
       param.refer = 'null';
       return param;
     }
+    //console.log(stream.fields);
     const uplaodBasePath = this.config.globalConst.uploadPath;
     // 生成文件名
     //console.log(stream.filename);
@@ -101,32 +102,17 @@ module.exports = {
       await sendToWormhole(stream);
       throw err;
     }
+    //console.log(stream.fields);
     stream.fields.refer = `${target}`.replace(/\\/g, '\\\\\\\\');
     return stream.fields;
   },
   //多文件上传
   async upload2() {
-    const parts = this.ctx.multipart({
-      autoFields: false
-    });
-    //console.log(parts.field);
-    const fileds = {refer1: 'null'};
+    const parts = this.ctx.multipart({autoFields: true});
+    const fileds = {refer: 'null'};
     let stream;
-    let res = {}, i = 1;
     while ((stream = await parts()) != null) {
-      if (!stream.fieldname && !stream.filename) {
-        console.log(stream);
-        for (let a = 0; a < stream.length; a += 2) {
-          if (stream[a] !== false) {
-            res[stream[a]] = stream[a + 1];
-          }
-          //console.log(a);
-        }
-        continue;
-      }
-      console.log(i);
       if (!stream.filename) continue;
-      console.log(i);
       const uplaodBasePath = this.config.globalConst.uploadPath;
       // 生成文件名
       const filename = this.ctx.session.username + '-' + Number.parseInt(Math.random() * 10000) + Path.extname(stream.filename);
@@ -145,13 +131,16 @@ module.exports = {
         await sendToWormhole(stream);
         throw err;
       }
-      fileds['refer' + i] = `${target}`;
-      i++;
+      if (fileds.refer === 'null') {
+        fileds.refer = target.replace(/\\/g, '\\\\\\\\');
+      } else {
+        fileds.refer += '||' + target.replace(/\\/g, '\\\\\\\\');
+      }
     }
-    for (let a in res) {
-      fileds[a] = res[a];
-    }
-    return fileds;
+    //console.log(parts.field);
+    //console.log(fileds.refer);
+    parts.field.refer = fileds.refer;
+    return parts.field;
   },
   async upload3() {
     const uplaodBasePath = this.config.globalConst.uploadPath;
@@ -178,15 +167,17 @@ module.exports = {
   async delFile(param) {
     if (param !== 'null') {
       let b = param.replace(/\\\\/g, '\\');
-      //if (Fs.existsSync(b)) console.log("this is ok");
-      Fs.exists(b, function (exist) {
-        if (exist) {
-          Fs.unlink(b, function (err) {
-            if (err) throw err;
-            console.log('文件删除成功！');
-          })
-        }
-      })
+      let arr = b.split('||');
+      for (let a  in arr) {
+        Fs.exists(arr[a], function (exist) {
+          if (exist) {
+            Fs.unlink(arr[a], function (err) {
+              if (err) throw err;
+              console.log('文件删除成功！');
+            })
+          }
+        })
+      }
     }
   },
 };

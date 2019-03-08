@@ -5,6 +5,8 @@ module.exports = {
     if (!stream) {
       throw 'stream defect';
     }
+    //console.log('parts.field : '+parts.field);
+    //console.log('parts.field.result_id : '+parts.field.result_id);
     stream.fields = parts.field;
     stream.once('limit', () => {
       const err = new Error('Request file too large');

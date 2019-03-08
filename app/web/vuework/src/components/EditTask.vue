@@ -69,8 +69,10 @@
                     </el-form-item>
                     <el-form-item label="参考" prop="refer">
                         <el-upload ref="abc" class="upload-demo" :http-request="uploadfile">
-                            <el-button ref="bbc" size="small" style="width:420px" v-if="!refer">上传参考文件</el-button>
-                            <el-button ref="bbc" size="small" style="width:420px" v-if="refer">已有参考文件点击修改</el-button>
+                            <el-button ref="bbc" size="small" style="width:420px" v-if="!refer.length">上传参考文件
+                            </el-button>
+                            <el-button ref="bbc" size="small" style="width:420px" v-if="refer.length">已有参考文件点击修改
+                            </el-button>
                         </el-upload>
                     </el-form-item>
                     <el-form-item label="工作类型">
@@ -195,7 +197,7 @@
             {required: true, message: '请输入描述', trigger: 'blur'},
           ],
         },
-        refer: '',
+        refer: [],
         show: false,
         gainshow: false,
         error: false,
@@ -213,15 +215,15 @@
       this.tasks.task_time = this.$route.params.time;
       this.taskquery.task_name = this.tasks.task_name;
       this.taskquery.time = this.tasks.task_time;
-      if (this.name.loginuser == "余盛季") {
+      if (this.name.loginuser === this.auditName) {
         this.disables = false;
       }
     },
     mounted: function () {
-      let url = this.urlAddr+'/task/detail/' + this.taskId;
+      let url = this.urlAddr + '/task/detail/' + this.taskId;
       console.log(url);
       this.$axios({
-        url: this.urlAddr+'/task/detail/' + this.tasks.task_id,
+        url: this.urlAddr + '/task/detail/' + this.tasks.task_id,
         method: 'get',
       }).then((res) => {
         if (res.data.status === 304) {
@@ -258,7 +260,8 @@
       uploadfile(file) {
         console.log("uploadfile", file);
         const _file = file.file;
-        this.refer = _file;
+        if (this.isString(this.refer[0])) this.refer = [];
+        this.refer.push(_file);
       },
       savegain() {
         if (this.save.result_name && this.save.result_detail && this.save.hour && this.save.time_detail && this.save.type_id) {
@@ -267,9 +270,11 @@
           //this.refer = this.$refs.abc.value;
           let formData;
           console.log(this.refer);
-          if (this.refer) {
+          if (this.refer.length !== 0) {
             formData = new FormData();
-            formData.append("myfile1", this.refer);
+            for (let a in this.refer) {
+              formData.append("myfile" + a, this.refer[a]);
+            }
             formData.append('result_name', this.save.result_name);
             formData.append('result_detail', this.save.result_detail);
             formData.append('hour', this.save.hour);
@@ -293,7 +298,7 @@
           }
           this.arr.push({data: formData, flag: 0});
           this.$refs.abc.value = '';
-          this.refer = '';
+          this.refer = [];
           this.save = [{
             result_name: '',
             result_detail: '',
@@ -318,7 +323,7 @@
           processData: false,
           // dataType: "html",//返回整合HTML
           // dataType: "json",//返回json格式设置
-          url: this.urlAddr+'/result/edit',
+          url: this.urlAddr + '/result/edit',
           method: 'post',
           data: data,
         })
@@ -330,7 +335,7 @@
           //processData: false,
           // dataType: "html",//返回整合HTML
           // dataType: "json",//返回json格式设置
-          url: this.urlAddr+'/result/edit',
+          url: this.urlAddr + '/result/edit',
           method: 'post',
           data: data,
         })
@@ -340,7 +345,7 @@
           event.preventDefault();
           if (this.tasks.task_name !== this.taskquery.task_name || this.tasks.task_time !== this.taskquery.time) {
             this.$axios({
-              url: this.urlAddr+'/task/edit',
+              url: this.urlAddr + '/task/edit',
               method: 'post',
               data: {
                 task_id: this.tasks.task_id,
@@ -362,7 +367,7 @@
           if (this.delresult.length > 0) {
             for (let a in this.delresult) {
               console.log(a);
-              let url = this.urlAddr+'/result/delete/' + this.delresult[a].data.task_id + '/' + this.delresult[a].data.result_id;
+              let url = this.urlAddr + '/result/delete/' + this.delresult[a].data.task_id + '/' + this.delresult[a].data.result_id;
               console.log(url);
               this.$axios({
                 url: url,
@@ -442,7 +447,7 @@
       },
       addResult() {
         if (this.tasks.task_name && this.tasks.task_time) {
-          this.refer = '';
+          this.refer = [];
           this.show = true;
           this.error = false;
           this.show1 = false;
@@ -451,6 +456,7 @@
           this.show = false;
         }
       },
+      //超链接  换成果
       changeresult(item) {
         console.log(item);
         if (this.tasks.task_name && this.tasks.task_time) {
@@ -471,9 +477,9 @@
             flag: item.flag,
           };
           if (item.data.refer === 'null') {
-            this.refer = '';
+            this.refer = [];
           } else {
-            this.refer = item.data.refer;
+            this.refer.push(item.data.refer);
           }
         } else {
           this.save = {
@@ -484,7 +490,7 @@
             type_id: item.data.get('type_id'),
             flag: item.flag,
           };
-          this.refer = item.data.get('myfile1');
+          this.refer.push(item.data.get('myfile1'));
         }
         console.log(this.refer);
         this.taskquery.result.result_name = this.save.result_name;
@@ -492,7 +498,7 @@
         this.taskquery.result.hour = this.save.hour;
         this.taskquery.result.time_detail = this.save.time_detail;
         this.taskquery.result.type_id = this.save.type_id;
-        this.taskquery.result.refer = this.save.refer;
+        this.taskquery.result.refer = this.refer;
         this.index1 = this.arr.indexOf(item);
         this.isshow = true;
         this.show = true;
@@ -514,7 +520,8 @@
         this.isshow = false;
         if (this.save.result_name === this.taskquery.result.result_name && this.save.result_detail === this.taskquery.result.result_detail
           && this.save.hour === this.taskquery.result.hour && this.save.time_detail === this.taskquery.result.time_detail &&
-          this.save.type_id === this.taskquery.result.type_id && this.isString(this.refer)) {
+          this.save.type_id === this.taskquery.result.type_id && this.isString(this.refer[0])) {
+          console.log(this.refer[0]);
           this.cancelchange();
           return
         }
@@ -524,9 +531,11 @@
           event.preventDefault();
           let formData, flag;
           console.log(this.refer);
-          if (this.refer && !this.isString(this.refer)) {
+          if (this.refer.length !== 0 && !this.isString(this.refer[0])) {
             formData = new FormData();
-            formData.append("myfile1", this.refer);
+            for (let a in this.refer) {
+              formData.append("myfile" + a, this.refer[a]);
+            }
             formData.append('result_name', this.save.result_name);
             formData.append('result_detail', this.save.result_detail);
             formData.append('hour', this.save.hour);
@@ -540,7 +549,7 @@
               hour: this.save.hour,
               time_detail: this.save.time_detail,
               type_id: this.save.type_id,
-              refer: 'null',
+              refer: this.refer[0],
               task_name: this.tasks.task_name,
             }
           }
@@ -548,7 +557,7 @@
           //编辑
           if (this.save.flag === -1) {
             flag = 1;
-            if (this.refer && !this.isString(this.refer)) {
+            if (this.refer.length !== 0 && !this.isString(this.refer[0])) {
               formData.append('result_id', this.arr[this.index1].data.result_id);
               formData.append('time_id', this.arr[this.index1].data.time_id);
             } else {
@@ -568,7 +577,7 @@
             flag: 0,
           }
           ];
-          this.refer = '';
+          this.refer = [];
           this.error1 = false;
           this.check = true;
           this.show1 = true;
