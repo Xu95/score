@@ -41,7 +41,7 @@
                     </el-table-column>
                     <el-table-column prop="score" label="评分" min-width="12%" :formatter="changescore">
                     </el-table-column>
-                    <el-table-column property="status" label="功能区" min-width="13s%">
+                    <el-table-column property="status" label="功能区" min-width="13%">
                         <template slot-scope="scope">
                             <i class="el-icon-zoom-in"></i>
                             <el-button type="text" v-model="scope.row.status" style="color: #606266"
