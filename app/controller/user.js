@@ -9,37 +9,46 @@ const readF = util.promisify(Fs.readFile);
 class UserController extends Controller {
   async login() {
     //console.log(this.ctx.cookies.get('csrfToken'));
-    let userpage;
+    this.ctx.session.userid = '';
+    this.ctx.session.userid = '';
+    this.ctx.session.username = '';
+    this.ctx.session.class = '';
+    this.ctx.session.spell = '';
+    let result;
     let params = this.ctx.request.body;//params-- / ; query-- ?
     try {
+      //console.log(params);
       const permmit = await this.service.user.login(params);
-      if (!permmit) return this.ctx.render('error.html');
-      userpage = await readF(Path.resolve(__dirname, '../view/list.html'));
+      if (!permmit) {
+        result = {
+          status: this.config.number.PARAM_ERROR,
+          data: {},
+        }
+      } else {
+        result = {
+          status: this.config.number.DATA_SUCCESS,
+          data: {username:this.ctx.session.username},
+        }
+      }
+      //userpage = await readF(Path.resolve(__dirname, '../view/list.html'));
     } catch (e) {
       this.ctx.helper.erroDeal(e, 'UserController/login');
       return
     }
-    this.ctx.response.type = 'html';
-    this.ctx.body = userpage;
-    /*
-    console.log("ok");
-    this.ctx.body = {
-      status: this.config.number.DATA_SUCCESS,
-      data: {},
-    }*/
+    //console.log(this.ctx.session.username);
+    this.ctx.body = result;
   }
 
   async logout() {
     this.ctx.session.userid = '';
-    let userpage;
-    try {
-      userpage = await readF(Path.resolve(__dirname, '../view/index.html'));
-    } catch (e) {
-      this.ctx.helper.erroDeal(e, 'UserController/logout');
-      return
-    }
-    this.ctx.response.type = 'html';
-    this.ctx.body = userpage;
+    this.ctx.session.userid = '';
+    this.ctx.session.username = '';
+    this.ctx.session.class = '';
+    this.ctx.session.spell = '';
+    this.ctx.body = {
+      status: this.config.number.NO_DATA_SUCCESS,
+      data: {},
+    };
   }
 }
 

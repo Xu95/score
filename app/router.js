@@ -11,7 +11,7 @@ module.exports = app => {
   router.get('/user/logout', controller.user.logout);
 //task
   router.get('/task/list/:page', controller.task.list);
-  router.get('/task/timeSearch/:start_time/:end_time/:page', controller.task.timeSearch);
+  router.get('/task/timeSearch/:start_time?/:end_time?', controller.task.timeSearch);
   router.get('/task/detail/:task_id', controller.task.detail);
   router.post('/task/increase', controller.task.increase);
   router.post('/task/edit', controller.task.edit);

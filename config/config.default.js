@@ -19,7 +19,7 @@ module.exports = appInfo => {
     client: {
       port: 6379,          // Redis port
       host: '127.0.0.1',   // Redis host
-      password: 'local',
+      password: 'root',
       db: 0,
     },
   };
@@ -27,6 +27,14 @@ module.exports = appInfo => {
     csrf: {
       enable: false,
     }
+  };
+  config.multipart = {
+    // will append to whilelist
+    fileExtensions: [
+      '.txt',
+      '.doc',
+      '.docx',
+    ],
   };
   return config;
 };

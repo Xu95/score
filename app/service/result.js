@@ -1,4 +1,5 @@
 const Service = require('egg').Service;
+const fs = require('fs');
 
 class ResultService extends Service {
   async detail(taskId, fieldId) {
@@ -19,6 +20,10 @@ class ResultService extends Service {
 
   async delete(taskId, fieldId) {
     const Redis = this.app.redis;
+    let aa = await Redis.hget('result', `${taskId}:${fieldId}`);
+    //console.log(aa);
+    aa = JSON.parse(aa.replace(/'/g, '"'));
+    if (aa.refer !== 'null') await this.ctx.helper.delFile(aa.refer);
     let [r1, r2] = await Promise.all([Redis.hdel('result', `${taskId}:${fieldId}`), Redis.hdel('time', `${taskId}:${fieldId}`)]);
     //console.log(`r1:${r1},r2:${r2}`);
     return r1 && r2;
@@ -26,13 +31,24 @@ class ResultService extends Service {
 
   async edit(params) {
     const Redis = this.app.redis;
-    let r = await Redis.hkeys('result');
-
-    let filed = [], filedid = 0;
-    for (let a of r) {
-      if (a.substring(0, 1) === params.task_id) filed.push(a);
+    if (!params.hasOwnProperty('task_id')) {
+      let res = await Redis.hgetall('task');
+      for (let a in res) {
+        let b = JSON.parse(res[a].replace(/'/g, '"'));
+        if (b.taskname === params.task_name) params.task_id = a;
+      }
     }
-    //console.log(filed);
+    let filed = [], filedid = null, r;
+    if (!params.hasOwnProperty('result_id') && !params.hasOwnProperty('time_id')) {
+      r = await Redis.hkeys('result');
+      for (let a of r) {
+        if (a.substring(0, 1) === params.task_id) filed.push(a);
+      }
+    } else {
+      filedid = params.result_id || params.time_id;
+    }
+    if (filedid === null) filedid = filed.length + 1; //表示新增
+    /*
     if (Array.isArray(filed) && filed.length !== 0) {
       //console.log(filed);
       r = await Redis.hmget('result', filed);
@@ -42,15 +58,22 @@ class ResultService extends Service {
         let b = JSON.parse(a.replace(/'/g, '"'));
         if (b.resultname === params.result_name) filedid = b.resultid;
       }
-    }
-    if (filedid === 0) filedid = filed.length + 1; //表示新增
+    }*/
     //console.log(filedid);
     let params2 = {
       result_id: `${filedid}`,
       time_id: `${filedid}`,
     };
     params = this.ctx.helper.objExtend(params, params2);
-
+    //console.log(params);
+    let checkFile = await Redis.hget('result', `${params.task_id}:${params.result_id}`);
+    if (checkFile) {//说明是编辑
+      let ref = JSON.parse(checkFile).refer;
+      //console.log(`ref: ${ref} and refer: ${params.refer}`);
+      if (ref !== 'null' && ref.replace(/\\\\/g,'\\\\\\\\') !== params.refer) {
+        await this.ctx.helper.delFile(ref);
+      }
+    }
     let [r1, r2] = await Promise.all([Redis.hset('result', `${params.task_id}:${filedid}`, `${this.ctx.helper.resultValue(params)}`), Redis.hset('time', `${params.task_id}:${filedid}`, `${this.ctx.helper.timeValue(params)}`)]);
     //console.log(`r1:${r1} and r2:${r2}`);
     return ((r1 === 0 || r1 === 1) && (r2 === 0 || r2 === 1));

@@ -11,37 +11,25 @@ class UserService extends Service {
     };
     let permmit = await this.userauth(params.username, params.password);
     //r = await this.app.redis.hget('user', id);
-    console.log(permmit);
+    //console.log(`permmit is ${permmit}`);
     if (permmit === 1) {
       let r;
       r = await this.app.redis.hgetall('user');
       //console.log(r);
       for (let a in r) {
         let b = JSON.parse(r[a].replace(/'/g, '"'));
-        if (b.username === params.username) {
+        if (b.spell === params.username) {
+          //console.log(`库中:${b.username} 参数:${params.username}`);
           this.ctx.session.userid = a;
           this.ctx.session.username = b.username;
           this.ctx.session.class = b.class;
+          this.ctx.session.spell = b.spell;
           break;
         }
       }
-      if (!this.ctx.session.username) {
-        let len = await this.app.redis.hlen('user');
-        let r1 = await this.app.redis.hset('user', `${len + 1}`, `${this.ctx.helper.userValue({
-          user_name: params.username,
-          class: '0'
-        })}`);
-        if (r1 === 1) {
-          this.ctx.session.userid = len + 1;
-          this.ctx.session.username = params.username;
-          this.ctx.session.class = '0';
-        }
-      }
+      if(!this.ctx.session.username) throw 'username is not exist';
+      return true;
       //r = JSON.parse(r.replace(/'/g, '"'));
-      result.status = this.config.number.DATA_SUCCESS;
-      result.data = {username: params.username};
-      //console.log(result);
-      return result;
     } else {
       return false;
     }

@@ -8,7 +8,7 @@
             </el-col>
         </el-row>
         <el-row>
-            <el-col :span="size+5">
+            <el-col :span="10">
                 <el-input id="password" v-model="logindata.password" type="password" placeholder="请输入密码">
                     <template slot="prepend">密码</template>
                 </el-input>
@@ -24,9 +24,9 @@
 
 <script>
   export default {
+    inject: ['reload'],
     data() {
       return {
-      size: 10,
         logindata: {
           username: '',
           password: '',
@@ -44,22 +44,28 @@
     },
     methods: {
       async login() {
+        //console.log(`username: ${this.logindata.username} password: ${this.logindata.password}`);
         this.$axios({
-          url: '/api/user/login',
+          url: this.urlAddr + '/user/login',
           method: 'post',
-          data: this.qs.stringify({
+          data: {
             username: this.logindata.username,
             password: this.logindata.password,
-          })
+          }
         }).then((res) => {
-          if(res.data.status === 304){
-            this.$router.push({name:'error',params:{errorData:res.data.data}
+          if (res.data.status === 304) {
+            this.$router.push({
+              name: 'error', params: {errorData: res.data.data}
             })
+          }
+          if (res.data.status === 302) {
+            alert('用户名或密码错误');
+            this.reload();
           }
           if (res.data.status === 202) {
             console.log('login succeed!');
             const Data = {
-              loginuser: this.logindata.username
+              loginuser: res.data.data.username,
             };
             sessionStorage.setItem('username', JSON.stringify(Data));
             console.log('设置缓存完毕');

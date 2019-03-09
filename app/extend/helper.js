@@ -11,7 +11,7 @@ const multiparty = require('multiparty');
 
 module.exports = {
   userValue(params) {
-    return `{"username":"${params.user_name}","class":"${params.class}"}`;
+    return `{"username":"${params.username}","class":"${params.class}","spell":"${params.spell}" }`;
   },
   taskValue(params) {
     return `{"taskname":"${params.task_name}","userid":"${params.user_id}","time":"${params.time}","score":"${params.score}"}`;
@@ -28,6 +28,14 @@ module.exports = {
         a[p] = b[p];
     }
     return a;
+  },
+  writeUser() {
+    let res;
+    let data = Fs.readFileSync('./user.json');
+    let person = data.toString();//将二进制的数据转换为字符串
+    person = JSON.parse(person);//将字符串转换为json对象
+    res = person.RECORDS;
+    return res;
   },
   ldapsearch(client, opts) {
     return new Promise((resolve, reject) => {
@@ -66,6 +74,7 @@ module.exports = {
     this.ctx.body = res;
   },
   async upload() {
+    //console.log('this is upload');
     let stream = await this.ctx.getFileStreamWithoutFileNotFoundError();
     //console.log(stream);
     if (!stream.filename) {
@@ -73,8 +82,10 @@ module.exports = {
       param.refer = 'null';
       return param;
     }
+    //console.log(stream.fields);
     const uplaodBasePath = this.config.globalConst.uploadPath;
     // 生成文件名
+    //console.log(stream.filename);
     const filename = this.ctx.session.username + '-' + Number.parseInt(Math.random() * 10000) + Path.extname(stream.filename);
     // 生成文件夹
     const dirName = this.formatTime();
@@ -91,35 +102,20 @@ module.exports = {
       await sendToWormhole(stream);
       throw err;
     }
-    stream.fields.refer = `${target}`;
+    //console.log(stream.fields);
+    stream.fields.refer = `${target}`.replace(/\\/g, '\\\\\\\\');
     return stream.fields;
   },
   //多文件上传
   async upload2() {
-    const parts = this.ctx.multipart({
-      autoFields: false
-    });
-    //console.log(parts.field);
-    const fileds = {refer1: 'null'};
+    const parts = this.ctx.multipart({autoFields: true});
+    const fileds = {refer: 'null'};
     let stream;
-    let res = {}, i = 1;
     while ((stream = await parts()) != null) {
-      if (!stream.fieldname && !stream.filename) {
-        console.log(stream);
-        for (let a = 0; a < stream.length; a += 2) {
-          if (stream[a] !== false) {
-            res[stream[a]] = stream[a + 1];
-          }
-          //console.log(a);
-        }
-        continue;
-      }
-      console.log(i);
       if (!stream.filename) continue;
-      console.log(i);
       const uplaodBasePath = this.config.globalConst.uploadPath;
       // 生成文件名
-      const filename = this.ctx.session.username + '-' + Number.parseInt(Math.random() * 10000) + Path.extname(stream.filename);
+      const filename = this.ctx.session.username + '-' + Number.parseInt(Math.random() * 10000) +'-'+ stream.filename.replace(/-/g,'');
       // 生成文件夹
       const dirName = this.formatTime();
       const allPath = Path.join(this.config.baseDir, uplaodBasePath, dirName);
@@ -135,13 +131,16 @@ module.exports = {
         await sendToWormhole(stream);
         throw err;
       }
-      fileds['refer' + i] = `${target}`;
-      i++;
+      if (fileds.refer === 'null') {
+        fileds.refer = target.replace(/\\/g, '\\\\\\\\');
+      } else {
+        fileds.refer += '||' + target.replace(/\\/g, '\\\\\\\\');
+      }
     }
-    for (let a in res) {
-      fileds[a] = res[a];
-    }
-    return fileds;
+    //console.log(parts.field);
+    //console.log(fileds.refer);
+    parts.field.refer = fileds.refer;
+    return parts.field;
   },
   async upload3() {
     const uplaodBasePath = this.config.globalConst.uploadPath;
@@ -164,5 +163,21 @@ module.exports = {
       console.log('mime: ' + file.mime);
       console.log('tmp filepath: ' + file.filepath);
     }
-  }
+  },
+  async delFile(param) {
+    if (param !== 'null') {
+      let b = param.replace(/\\\\/g, '\\');
+      let arr = b.split('||');
+      for (let a  in arr) {
+        Fs.exists(arr[a], function (exist) {
+          if (exist) {
+            Fs.unlink(arr[a], function (err) {
+              if (err) throw err;
+              console.log('文件删除成功！');
+            })
+          }
+        })
+      }
+    }
+  },
 };

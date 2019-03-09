@@ -5,7 +5,7 @@ const Controller = require('egg').Controller;
 class TaskController extends Controller {
   async list() {
     if (this.ctx.session.username === this.config.globalConst.auditName) this.result.data.roles = 1;
-    const page = this.ctx.params.page || 1;
+    const page = this.ctx.params.page || '0';
     let r;
     try {
       r = await this.service.task.list(page);
@@ -20,16 +20,17 @@ class TaskController extends Controller {
       this.result.status = this.config.number.DATA_SUCCESS;
       this.result.data.results = r;
     }
-    console.log(this.result.data.results);
+    //console.log(this.result.data.results);
     this.ctx.body = this.result;
   }
 
   async timeSearch() {
     if (this.ctx.session.username === this.config.globalConst.auditName) this.result.data.roles = 1;
-    const [startTime, endTime, page] = this.ctx.params;
+    const {start_time, end_time} = this.ctx.params;
     let r;
     try {
-      r = await this.service.task.timeSearch(startTime, endTime, page);
+      //console.log(`stime : ${start_time} etime :${end_time}`);
+      r = await this.service.task.timeSearch(start_time, end_time);
     } catch (e) {
       this.ctx.helper.erroDeal(e, 'TaskController/timeSearch');
       return
@@ -41,13 +42,14 @@ class TaskController extends Controller {
       this.result.status = this.config.number.NO_DATA_ERROR;
       this.result.data = {};
     }
-    console.log(this.result.data.results);
+    //console.log(this.result.data.results);
     this.ctx.body = this.result;
   }
 
   async detail() {
     if (this.ctx.session.username === this.config.globalConst.auditName) this.result.data.roles = 1;
     const taskId = this.ctx.params.task_id;
+    //console.log(taskId);
     let r;
     try {
       r = await this.service.task.detail(taskId);
@@ -62,7 +64,7 @@ class TaskController extends Controller {
       this.result.status = this.config.number.PARAM_ERROR;
       this.result.data = {};
     }
-    console.log(this.result.data.results);
+    //console.log(this.result.data.results);
     this.ctx.body = this.result;
   }
 
@@ -83,7 +85,7 @@ class TaskController extends Controller {
       this.result.status = this.config.number.PARAM_ERROR;
       this.result.data = {};
     }
-    console.log(this.result.data);
+    //console.log(this.result.data);
     this.ctx.body = this.result;
   }
 
@@ -92,8 +94,8 @@ class TaskController extends Controller {
     let param = this.ctx.request.body;
     const userid = this.ctx.session.userid;
     const score = '0';
-    param = this.ctx.helper.objExtend(param, {userid: userid, score: score});
-    console.log(param);
+    param = this.ctx.helper.objExtend(param, {user_id: userid, score: score});
+    //console.log(param);
     let r;
     try {
       r = await this.service.task.edit(param);

@@ -3,8 +3,8 @@ exports.num = {
   状态码
    */
   'NO_USE': 200,//初始状态
-  'NO_DATA_SUCCESS': 201,//有数据返回
-  'DATA_SUCCESS': 202,//无数据返回
+  'NO_DATA_SUCCESS': 201,//无数据返回
+  'DATA_SUCCESS': 202,//有数据返回
   'NO_DATA_ERROR': 301,//数据不存在
   'PARAM_ERROR': 302,//参数错误
   'AUTH_ERROR': 303,//权限错误
@@ -23,8 +23,8 @@ exports.globalConst = {
   /*
   审计相关
    */
-  auditName: '大锤1',
-  auditId: '1',
+  auditName: '余盛季',
+  auditId: '0001',
   /*
   上传文件路径
    */
