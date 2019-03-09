@@ -69,10 +69,11 @@
                     </el-form-item>
                     <el-form-item label="参考" prop="refer">
                         <el-upload ref="abc" class="upload-demo" :http-request="uploadfile" :on-remove="removeRefer"
-                                   :file-list="fileList" :on-change="removeFileList" action="">
+                                   :file-list="fileList" action="">
                             <el-button ref="bbc" size="small" style="width:420px" v-if="!refer.length">上传参考文件
                             </el-button>
-                            <el-button ref="bbc" size="small" style="width:420px" v-if="refer.length">已有参考文件点击修改
+                            <el-button ref="bbc" size="small" style="width:420px" v-if="refer.length"
+                                       @click="removeFileList()">已有参考文件点击修改
                             </el-button>
                         </el-upload>
                     </el-form-item>
@@ -270,13 +271,15 @@
         const _file = file.file;
         if (this.isString(this.refer[0])) {
           this.refer = [];
-          this.$refs.abc.clearFiles();
+          //this.$refs.abc.clearFiles();
         }
         this.refer.push(_file);
         console.log(this.refer);
       },
-      removeFileList(fileList) {
-        console.log(fileList);
+      removeFileList() {
+        if (this.isString(this.refer[0])) {
+          setTimeout(() => this.$refs.abc.clearFiles(), 1000);
+        }
       },
       savegain(formName) {
         this.$refs[formName].validate((valid) => {
@@ -487,6 +490,7 @@
         }
         this.fileList = [];
         this.refer = [];
+        console.log(item);
         if (item.data.refer === 'null' || item.data.hasOwnProperty('refer')) {
           this.save = {
             result_name: item.data.result_name,
@@ -510,9 +514,12 @@
             type_id: item.data.get('type_id'),
             flag: item.flag,
           };
-          this.refer.push(item.data.get('myfile1'));
+          let a = 0;
+          while (item.data.get('myfile' + a)) {
+            this.refer.push(item.data.get('myfile' + a));
+            a++;
+          }
         }
-        // console.log(this.refer);
         this.taskquery.result.result_name = this.save.result_name;
         this.taskquery.result.result_detail = this.save.result_detail;
         this.taskquery.result.hour = this.save.hour;
@@ -522,22 +529,23 @@
         this.fileList = [];
         console.log(this.refer);
         if (this.isString(this.refer[0])) {
-          console.log(this.refer[0]);
+          //console.log(this.refer[0]);
           let refs = this.refer[0].split('||');
-          console.log(refs);
+          //console.log(refs);
           for (let a in refs) {
-            console.log(refs[a]);
+            //console.log(refs[a]);
             let bb = refs[a].split('\\');
             this.fileList.push({name: `${bb[bb.length - 1]}`, url: ''});
           }
-        } else {
-          for (let a of this.refer) {
-            this.fileList.push({name: `${this.refer[a].filename}`, url: ''});
+        } else if (this.refer.length > 0) {
+          console.log(this.refer);
+          for (let a in this.refer) {
+            this.fileList.push({name: `${this.refer[a].name}`, url: ''});
           }
         }
-        console.log(this.fileList);
+        //console.log(this.fileList);
         this.index1 = this.arr.indexOf(item);
-        console.log(this.index1);
+        //console.log(this.index1);
         this.isshow = true;
         this.show = true;
         this.show1 = false;
@@ -558,8 +566,8 @@
         this.isshow = false;
         if (this.save.result_name === this.taskquery.result.result_name && this.save.result_detail === this.taskquery.result.result_detail
           && this.save.hour === this.taskquery.result.hour && this.save.time_detail === this.taskquery.result.time_detail &&
-          this.save.type_id === this.taskquery.result.type_id && this.isString(this.refer[0])) {
-          console.log(this.refer[0]);
+          this.save.type_id === this.taskquery.result.type_id && (this.isString(this.refer[0]) || this.refer.length === 0)) {
+          //console.log(this.refer[0]);
           this.cancelchange();
           return
         }
@@ -588,7 +596,7 @@
                 hour: this.save.hour,
                 time_detail: this.save.time_detail,
                 type_id: this.save.type_id,
-                refer: this.refer[0],
+                refer: this.refer[0] || 'null',
                 task_name: this.tasks.task_name,
               }
             }
@@ -606,7 +614,7 @@
             }
             this.arr[this.index1].data = formData;
             this.arr[this.index1].flag = flag;
-            // console.log(this.arr[this.index1]);
+            //console.log(this.arr[this.index1]);
             this.save = [{
               result_name: '',
               result_detail: '',

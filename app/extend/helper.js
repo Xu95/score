@@ -115,7 +115,7 @@ module.exports = {
       if (!stream.filename) continue;
       const uplaodBasePath = this.config.globalConst.uploadPath;
       // 生成文件名
-      const filename = this.ctx.session.username + '-' + Number.parseInt(Math.random() * 10000) +'-'+ stream.filename;
+      const filename = this.ctx.session.username + '-' + Number.parseInt(Math.random() * 10000) +'-'+ stream.filename.replace(/-/g,'');
       // 生成文件夹
       const dirName = this.formatTime();
       const allPath = Path.join(this.config.baseDir, uplaodBasePath, dirName);
