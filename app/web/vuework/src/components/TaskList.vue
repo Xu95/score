@@ -242,7 +242,7 @@
         done();
       },
       showDetail(row) {
-        console.log(row.detail.task_id);
+        //console.log(row.detail.task_id);
         let url = 'TaskDetail';
         this.$router.replace({
           name: url,
@@ -263,7 +263,7 @@
         if(!t1) t1 = '2000-01-01';
         if(!t2) t2 = '2100-01-01';
         let url = this.urlAddr+'/task/timeSearch/' + t1 + '/' + t2;
-        console.log(url);
+       // console.log(url);
         this.$axios({
           url: this.urlAddr+'/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
@@ -278,7 +278,7 @@
           for (let i in result) {
             this.taskdata.push({id: i, detail: result[i]});
           }
-          console.log(this.taskdata);
+          //console.log(this.taskdata);
         }, (err) => {
           console.log(err);
         });
@@ -288,7 +288,7 @@
         if (name === '0') {
           name = '未审核';
         }
-        console.log(name);
+       // console.log(name);
         return name;
       },
       sortByName: function (obj1, obj2) {

@@ -171,10 +171,10 @@
       this.taskquery.applicant_name = this.$route.params.applicant_name;
       this.taskquery.time = this.$route.params.time;
       let check = this.$route.params.score;
-      console.log(`the socre : ${this.$route.params.score}`);
+      //console.log(`the socre : ${this.$route.params.score}`);
       if (this.name.loginuser !== this.taskquery.applicant_name || check !== '0') this.flag = false;
       let url = this.urlAddr + '/task/detail/' + this.taskId;
-      console.log(url);
+      //console.log(url);
       this.$axios({
         url: this.urlAddr + '/task/detail/' + this.taskquery.task_id,
         method: 'get',
@@ -230,7 +230,7 @@
       ,
       timeSearch(t1, t2) {
         let url = this.urlAddr + '/task/timeSearch/' + t1 + '/' + t2;
-        console.log(url);
+        //console.log(url);
         this.$axios({
           url: this.urlAddr + '/task/timeSearch/' + t1 + '/' + t2,
           method: 'get',
@@ -245,9 +245,9 @@
           for (let i in result) {
             this.taskdata.push({id: i, detail: result[i]});
           }
-          console.log(this.taskdata);
+         // console.log(this.taskdata);
         }, (err) => {
-          console.log(err);
+          //console.log(err);
         });
       },
       changescore: function (row) {
@@ -255,7 +255,7 @@
         if (name === '0') {
           name = '未审核';
         }
-        console.log(name);
+       // console.log(name);
         return name;
       },
       getTaskList: function () {
@@ -267,8 +267,8 @@
       deleteResult: function (row) {
         if (confirm('确认删除此成果吗') === true) {
           let url = this.urlAddr + '/result/delete/' + this.taskquery.task_id + '/' + row.detail.result_id;
-          console.log(url);
-          console.log(row);
+         // console.log(url);
+         // console.log(row);
           this.$axios({
             url: url,
             method: 'get',
@@ -279,7 +279,7 @@
               })
             }
           }, (err) => {
-            console.log(err);
+           // console.log(err);
           });
           this.reload();
         }

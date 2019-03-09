@@ -68,7 +68,7 @@
                         <el-input v-model="save.result_detail"></el-input>
                     </el-form-item>
                     <el-form-item label="参考" prop="refer">
-                        <el-upload ref="abc" class="upload-demo" :http-request="uploadfile">
+                        <el-upload ref="abc" class="upload-demo" :http-request="uploadfile" :on-remove="removeRefer">
                             <el-button ref="bbc" size="small" style="width:420px" v-if="!refer">上传参考文件</el-button>
                             <el-button ref="bbc" size="small" style="width:420px" v-if="refer">已有参考文件点击修改</el-button>
                         </el-upload>
@@ -81,15 +81,20 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="工作时间" prop="hour">
-                        <el-input v-model="save.hour"></el-input>
+                    <el-form-item label="工作时间" prop="hour" style="width:500px">
+                        <el-col :span="20">
+                            <el-input v-model.number="save.hour"></el-input>
+                        </el-col>
+                        <el-col :span="4">
+                            <span>工时</span>
+                        </el-col>
                     </el-form-item>
                     <el-form-item label="工时描述" prop="time_detail">
                         <el-input v-model="save.time_detail" type="textarea"></el-input>
                     </el-form-item>
-                    <el-button type="primary" @click="change2()" v-if="isshow">完成修改</el-button>
+                    <el-button type="primary" @click="change2('save')" v-if="isshow">完成修改</el-button>
                     <el-button type="primary" @click="cancelchange()" v-if="isshow">取消修改</el-button>
-                    <el-button type="primary" @click="savegain(this)" v-if="!isshow">提交成果</el-button>
+                    <el-button type="primary" @click="savegain('save')" v-if="!isshow">提交成果</el-button>
                     <el-button type="primary" @click="cancelchange()" v-if="!isshow">取消</el-button>
                 </el-form>
                 <el-alert v-if="error1" title="请填写表格" type="error" center show-icon>
@@ -180,6 +185,7 @@
           ],
           hour: [
             {required: true, message: '请输入工作时间', trigger: 'blur'},
+            { type: 'number', message: '工时必须为数字值'},
           ],
           time_detail: [
             {required: true, message: '请输入时间描述', trigger: 'blur'},
@@ -221,18 +227,19 @@
         this.$router.replace('/login');
       },
       uploadfile(file) {
-        console.log("uploadfile", file)
+        //console.log("uploadfile", file)
         const _file = file.file;
         this.refer.push(_file);
       },
-      savegain() {
-        if (this.save.result_name && this.save.result_detail && this.save.hour && this.save.time_detail) {
+      savegain(formName) {
+        this.$refs[formName].validate((valid) => {
+            if (valid) {
           this.gainshow = true;
           this.index += 1;
           event.preventDefault();
           //this.refer = this.$refs.abc.value;
           let formData;
-          console.log("1111");
+         // console.log("1111");
           console.log(this.refer);
           if (this.refer.length !== 0) {
             formData = new FormData();
@@ -278,9 +285,10 @@
           this.error1 = true;
         }
         console.log(this.$refs);
+        })
       },
       post1(data) {
-        console.log("jjbb");
+       // console.log("jjbb");
         return this.$axios({
           contentType: false,
           processData: false,
@@ -292,7 +300,7 @@
         })
       },
       post2(data) {
-        console.log("jjbb");
+       // console.log("jjbb");
         return this.$axios({
           //contentType: 'multipart/form-data',
           //processData: false,
@@ -325,9 +333,9 @@
             console.log("tasksave succeed");
             if (this.arr.length > 0) {
               for (let [index, a] of this.arr.entries()) {
-                console.log(a);
+                //console.log(a);
                 if (a.hasOwnProperty('refer')) {
-                  console.log(" 没有文件");
+                 // console.log(" 没有文件");
                   a.task_id = task_id;
                   a.result_id = index + 1;
                   a.time_id = index + 1;
@@ -339,7 +347,7 @@
                     }
                   })
                 } else {
-                  console.log(" 有文件");
+                 // console.log(" 有文件");
                   a.append('task_id', task_id);
                   a.append('result_id', index + 1);
                   a.append('time_id', index + 1);
@@ -373,7 +381,7 @@
         }
       },
       changeresult(item) {
-        console.log(item);
+       // console.log(item);
         if (this.tasks.task_name && this.tasks.task_time) {
           this.show = true;
           this.error = false;
@@ -419,56 +427,58 @@
         this.show = false;
         this.show1 = true;
       },
-      change2() {
+      change2(formName) {
         this.isshow = false;
-        if (this.save.result_name && this.save.result_detail && this.save.hour && this.save.time_detail) {
-          this.gainshow = true;
-          //this.index += 1;
-          event.preventDefault();
-          let formData;
-          console.log(this.refer);
-          if (this.refer.length !== 0) {
-            formData = new FormData();
-            for(let a in this.refer){
-              formData.append("myfile"+a, this.refer[a]);
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.gainshow = true;
+            //this.index += 1;
+            event.preventDefault();
+            let formData;
+            console.log(this.refer);
+            if (this.refer.length !== 0) {
+              formData = new FormData();
+              for (let a in this.refer) {
+                formData.append("myfile" + a, this.refer[a]);
+              }
+              formData.append('result_name', this.save.result_name);
+              formData.append('result_detail', this.save.result_detail);
+              formData.append('hour', this.save.hour);
+              formData.append('time_detail', this.save.time_detail);
+              formData.append('type_id', this.save.type_id);
+              formData.append('type_name', this.save.type_name);
+              formData.append('task_name', this.tasks.task_name);
+            } else {
+              formData = {
+                result_name: this.save.result_name,
+                result_detail: this.save.result_detail,
+                hour: this.save.hour,
+                time_detail: this.save.time_detail,
+                type_id: this.save.type_id,
+                type_name: this.save.type_name,
+                refer: 'null',
+                task_name: this.tasks.task_name,
+              }
             }
-            formData.append('result_name', this.save.result_name);
-            formData.append('result_detail', this.save.result_detail);
-            formData.append('hour', this.save.hour);
-            formData.append('time_detail', this.save.time_detail);
-            formData.append('type_id', this.save.type_id);
-            formData.append('type_name', this.save.type_name);
-            formData.append('task_name', this.tasks.task_name);
+            this.arr[this.index] = formData;
+            this.refer = [];
+            this.save = [{
+              result_name: '',
+              result_detail: '',
+              hour: '',
+              type_id: '',
+              type_name: '',
+              time_detail: '',
+            }
+            ];
+            this.error1 = false;
+            this.check = true;
+            this.show1 = true;
+            this.show = false;
           } else {
-            formData = {
-              result_name: this.save.result_name,
-              result_detail: this.save.result_detail,
-              hour: this.save.hour,
-              time_detail: this.save.time_detail,
-              type_id: this.save.type_id,
-              type_name: this.save.type_name,
-              refer: 'null',
-              task_name: this.tasks.task_name,
-            }
+            this.error1 = true;
           }
-          this.arr[this.index] = formData;
-          this.refer = [];
-          this.save = [{
-            result_name: '',
-            result_detail: '',
-            hour: '',
-            type_id: '',
-            type_name: '',
-            time_detail: '',
-          }
-          ];
-          this.error1 = false;
-          this.check = true;
-          this.show1 = true;
-          this.show = false;
-        } else {
-          this.error1 = true;
-        }
+        })
       },
       removeresult(item) {
         const index = this.arr.indexOf(item)
@@ -482,7 +492,14 @@
       renameRefer: function (row) {
         if (row.refer === 'null') return '无文件';
         return row.refer;
-      }
+      },
+      removeRefer(file, fileList) {
+        for (let a in this.refer) {
+          if (this.refer[a].name === file.name && this.refer[a].uid === file.uid) {
+            this.refer.splice(a, 1);
+          }
+        }
+      },
     }
   }
 </script>

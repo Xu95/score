@@ -68,7 +68,8 @@
                         <el-input v-model="save.result_detail"></el-input>
                     </el-form-item>
                     <el-form-item label="参考" prop="refer">
-                        <el-upload ref="abc" class="upload-demo" :http-request="uploadfile">
+                        <el-upload ref="abc" class="upload-demo" :http-request="uploadfile" :on-remove="removeRefer"
+                                   :file-list="fileList" :on-change="removeFileList" action="">
                             <el-button ref="bbc" size="small" style="width:420px" v-if="!refer.length">上传参考文件
                             </el-button>
                             <el-button ref="bbc" size="small" style="width:420px" v-if="refer.length">已有参考文件点击修改
@@ -83,15 +84,20 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="工作时间" prop="hour">
-                        <el-input v-model="save.hour"></el-input>
+                    <el-form-item label="工作时间" prop="hour" style="width:500px">
+                        <el-col :span="20">
+                            <el-input v-model.number="save.hour"></el-input>
+                        </el-col>
+                        <el-col :span="4">
+                            <span>工时</span>
+                        </el-col>
                     </el-form-item>
                     <el-form-item label="工时描述" prop="time_detail">
                         <el-input v-model="save.time_detail" type="textarea"></el-input>
                     </el-form-item>
-                    <el-button type="primary" @click="change2()" v-if="isshow">完成修改</el-button>
+                    <el-button type="primary" @click="change2('save')" v-if="isshow">完成修改</el-button>
                     <el-button type="primary" @click="cancelchange()" v-if="isshow">取消修改</el-button>
-                    <el-button type="primary" @click="savegain(this)" v-if="!isshow">提交成果</el-button>
+                    <el-button type="primary" @click="savegain('save')" v-if="!isshow">提交成果</el-button>
                     <el-button type="primary" @click="cancelchange()" v-if="!isshow">取消</el-button>
                 </el-form>
                 <el-alert v-if="error1" title="请填写表格" type="error" center show-icon>
@@ -138,6 +144,7 @@
           results: [],
           refer: '',
         },
+        fileList: [],
         taskquery: {
           task_name: '',
           time: '',
@@ -189,6 +196,7 @@
           ],
           hour: [
             {required: true, message: '请输入工作时间', trigger: 'blur'},
+            {type: 'number', message: '工时必须为数字值'},
           ],
           time_detail: [
             {required: true, message: '请输入时间描述', trigger: 'blur'},
@@ -221,7 +229,7 @@
     },
     mounted: function () {
       let url = this.urlAddr + '/task/detail/' + this.taskId;
-      console.log(url);
+      // console.log(url);
       this.$axios({
         url: this.urlAddr + '/task/detail/' + this.tasks.task_id,
         method: 'get',
@@ -231,12 +239,12 @@
             name: 'error', params: {errorData: res.data.data}
           })
         }
-        console.log(res.data);
+        // console.log(res.data);
         const result = res.data.data.results;
         for (let i in result) {
           if (result[i].result_id > this.maxResultId) this.maxResultId = parseInt(result[i].result_id);
           this.arr.push({data: result[i], flag: -1});
-          console.log(this.arr);
+          //console.log(this.arr);
         }
       }, (err) => {
         console.log(err);
@@ -258,66 +266,75 @@
         this.$router.replace('/login');
       },
       uploadfile(file) {
-        console.log("uploadfile", file);
+        // console.log("uploadfile", file)
         const _file = file.file;
-        if (this.isString(this.refer[0])) this.refer = [];
-        this.refer.push(_file);
-      },
-      savegain() {
-        if (this.save.result_name && this.save.result_detail && this.save.hour && this.save.time_detail && this.save.type_id) {
-          this.gainshow = true;
-          event.preventDefault();
-          //this.refer = this.$refs.abc.value;
-          let formData;
-          console.log(this.refer);
-          if (this.refer.length !== 0) {
-            formData = new FormData();
-            for (let a in this.refer) {
-              formData.append("myfile" + a, this.refer[a]);
-            }
-            formData.append('result_name', this.save.result_name);
-            formData.append('result_detail', this.save.result_detail);
-            formData.append('hour', this.save.hour);
-            formData.append('time_detail', this.save.time_detail);
-            formData.append('type_id', this.save.type_id);
-            formData.append('task_name', this.tasks.task_name);
-            formData.append('result_id', this.maxResultId + 1);
-            formData.append('time_id', this.maxResultId + 1);
-          } else {
-            formData = {
-              result_name: this.save.result_name,
-              result_detail: this.save.result_detail,
-              hour: this.save.hour,
-              time_detail: this.save.time_detail,
-              type_id: this.save.type_id,
-              refer: 'null',
-              task_name: this.tasks.task_name,
-              result_id: this.maxResultId + 1,
-              time_id: this.maxResultId + 1,
-            }
-          }
-          this.arr.push({data: formData, flag: 0});
-          this.$refs.abc.value = '';
+        if (this.isString(this.refer[0])) {
           this.refer = [];
-          this.save = [{
-            result_name: '',
-            result_detail: '',
-            hour: '',
-            type_id: '',
-            time_detail: '',
-          }
-          ];
-          this.maxResultId += 1;
-          this.error1 = false;
-          this.check = true;
-          this.show1 = true;
-          this.show = false;
-        } else {
-          this.error1 = true;
+          this.$refs.abc.clearFiles();
         }
+        this.refer.push(_file);
+        console.log(this.refer);
+      },
+      removeFileList(fileList) {
+        console.log(fileList);
+      },
+      savegain(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.gainshow = true;
+            event.preventDefault();
+            //this.refer = this.$refs.abc.value;
+            let formData;
+            console.log(this.refer);
+            if (this.refer.length !== 0) {
+              formData = new FormData();
+              for (let a in this.refer) {
+                formData.append("myfile" + a, this.refer[a]);
+              }
+              formData.append('result_name', this.save.result_name);
+              formData.append('result_detail', this.save.result_detail);
+              formData.append('hour', this.save.hour);
+              formData.append('time_detail', this.save.time_detail);
+              formData.append('type_id', this.save.type_id);
+              formData.append('task_name', this.tasks.task_name);
+              formData.append('result_id', this.maxResultId + 1);
+              formData.append('time_id', this.maxResultId + 1);
+            } else {
+              formData = {
+                result_name: this.save.result_name,
+                result_detail: this.save.result_detail,
+                hour: this.save.hour,
+                time_detail: this.save.time_detail,
+                type_id: this.save.type_id,
+                refer: 'null',
+                task_name: this.tasks.task_name,
+                result_id: this.maxResultId + 1,
+                time_id: this.maxResultId + 1,
+              }
+            }
+            this.arr.push({data: formData, flag: 0});
+            this.$refs.abc.value = '';
+            this.refer = [];
+            this.save = [{
+              result_name: '',
+              result_detail: '',
+              hour: '',
+              type_id: '',
+              time_detail: '',
+            }
+            ];
+            this.maxResultId += 1;
+            this.error1 = false;
+            this.check = true;
+            this.show1 = true;
+            this.show = false;
+          } else {
+            this.error1 = true;
+          }
+        })
       },
       post1(data) {
-        console.log("带文件上传");
+        // console.log("带文件上传");
         return this.$axios({
           contentType: false,
           processData: false,
@@ -329,7 +346,7 @@
         })
       },
       post2(data) {
-        console.log("不带文件上传");
+        // console.log("不带文件上传");
         return this.$axios({
           //contentType: 'multipart/form-data',
           //processData: false,
@@ -366,9 +383,9 @@
           }
           if (this.delresult.length > 0) {
             for (let a in this.delresult) {
-              console.log(a);
+              // console.log(a);
               let url = this.urlAddr + '/result/delete/' + this.delresult[a].data.task_id + '/' + this.delresult[a].data.result_id;
-              console.log(url);
+              // console.log(url);
               this.$axios({
                 url: url,
                 method: 'get',
@@ -392,7 +409,7 @@
               //新增
               if (a.flag === 0) {
                 if (a.data.hasOwnProperty('refer')) {
-                  console.log(" 没有文件");
+                  // console.log(" 没有文件");
                   a.data.task_id = task_id;
                   this.post2(a.data).then((res) => {
                     if (res.data.status === 304) {
@@ -402,7 +419,7 @@
                     }
                   })
                 } else {
-                  console.log(" 有文件");
+                  // console.log(" 有文件");
                   a.data.append('task_id', task_id);
                   this.post1(a.data).then((res) => {
                     if (res.data.status === 304) {
@@ -416,7 +433,7 @@
               //修改的成果
               if (a.flag === 1) {
                 if (a.data.hasOwnProperty('refer') && this.isString(a.data.refer)) {
-                  console.log(" 没有文件");
+                  // console.log(" 没有文件");
                   a.data.task_id = task_id;
                   this.post2(a.data).then((res) => {
                     if (res.data.status === 304) {
@@ -426,7 +443,7 @@
                     }
                   })
                 } else {
-                  console.log(" 有文件");
+                  // console.log(" 有文件");
                   a.data.append('task_id', task_id);
                   this.post1(a.data).then((res) => {
                     if (res.data.status === 304) {
@@ -458,20 +475,23 @@
       },
       //超链接  换成果
       changeresult(item) {
-        console.log(item);
+        // console.log(item);
         if (this.tasks.task_name && this.tasks.task_time) {
           this.show = true;
           this.error = false;
           this.show1 = false;
+          this.isshow = true;
         } else {
           this.error = true;
           this.show = false;
         }
+        this.fileList = [];
+        this.refer = [];
         if (item.data.refer === 'null' || item.data.hasOwnProperty('refer')) {
           this.save = {
             result_name: item.data.result_name,
             result_detail: item.data.result_detail,
-            hour: item.data.hour,
+            hour: Number(item.data.hour),
             time_detail: item.data.time_detail,
             type_id: item.data.type_id,
             flag: item.flag,
@@ -485,21 +505,39 @@
           this.save = {
             result_name: item.data.get('result_name'),
             result_detail: item.data.get('result_detail'),
-            hour: item.data.get('hour'),
+            hour: Number(item.data.get('hour')),
             time_detail: item.data.get('time_detail'),
             type_id: item.data.get('type_id'),
             flag: item.flag,
           };
           this.refer.push(item.data.get('myfile1'));
         }
-        console.log(this.refer);
+        // console.log(this.refer);
         this.taskquery.result.result_name = this.save.result_name;
         this.taskquery.result.result_detail = this.save.result_detail;
         this.taskquery.result.hour = this.save.hour;
         this.taskquery.result.time_detail = this.save.time_detail;
         this.taskquery.result.type_id = this.save.type_id;
         this.taskquery.result.refer = this.refer;
+        this.fileList = [];
+        console.log(this.refer);
+        if (this.isString(this.refer[0])) {
+          console.log(this.refer[0]);
+          let refs = this.refer[0].split('||');
+          console.log(refs);
+          for (let a in refs) {
+            console.log(refs[a]);
+            let bb = refs[a].split('\\');
+            this.fileList.push({name: `${bb[bb.length - 1]}`, url: ''});
+          }
+        } else {
+          for (let a of this.refer) {
+            this.fileList.push({name: `${this.refer[a].filename}`, url: ''});
+          }
+        }
+        console.log(this.fileList);
         this.index1 = this.arr.indexOf(item);
+        console.log(this.index1);
         this.isshow = true;
         this.show = true;
         this.show1 = false;
@@ -516,7 +554,7 @@
         this.show = false;
         this.show1 = true;
       },
-      change2() {
+      change2(formName) {
         this.isshow = false;
         if (this.save.result_name === this.taskquery.result.result_name && this.save.result_detail === this.taskquery.result.result_detail
           && this.save.hour === this.taskquery.result.hour && this.save.time_detail === this.taskquery.result.time_detail &&
@@ -525,66 +563,68 @@
           this.cancelchange();
           return
         }
-        if (this.save.result_name && this.save.result_detail && this.save.hour && this.save.time_detail && this.save.type_id) {
-          this.gainshow = true;
-          //this.index += 1;
-          event.preventDefault();
-          let formData, flag;
-          console.log(this.refer);
-          if (this.refer.length !== 0 && !this.isString(this.refer[0])) {
-            formData = new FormData();
-            for (let a in this.refer) {
-              formData.append("myfile" + a, this.refer[a]);
-            }
-            formData.append('result_name', this.save.result_name);
-            formData.append('result_detail', this.save.result_detail);
-            formData.append('hour', this.save.hour);
-            formData.append('time_detail', this.save.time_detail);
-            formData.append('type_id', this.save.type_id);
-            formData.append('task_name', this.tasks.task_name);
-          } else {
-            formData = {
-              result_name: this.save.result_name,
-              result_detail: this.save.result_detail,
-              hour: this.save.hour,
-              time_detail: this.save.time_detail,
-              type_id: this.save.type_id,
-              refer: this.refer[0],
-              task_name: this.tasks.task_name,
-            }
-          }
-          if (this.save.flag === 0) flag = 0;//新增
-          //编辑
-          if (this.save.flag === -1) {
-            flag = 1;
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.gainshow = true;
+            //this.index += 1;
+            event.preventDefault();
+            let formData, flag;
+            //console.log(this.refer);
             if (this.refer.length !== 0 && !this.isString(this.refer[0])) {
-              formData.append('result_id', this.arr[this.index1].data.result_id);
-              formData.append('time_id', this.arr[this.index1].data.time_id);
+              formData = new FormData();
+              for (let a in this.refer) {
+                formData.append("myfile" + a, this.refer[a]);
+              }
+              formData.append('result_name', this.save.result_name);
+              formData.append('result_detail', this.save.result_detail);
+              formData.append('hour', this.save.hour);
+              formData.append('time_detail', this.save.time_detail);
+              formData.append('type_id', this.save.type_id);
+              formData.append('task_name', this.tasks.task_name);
             } else {
-              formData.result_id = this.arr[this.index1].data.result_id;
-              formData.time_id = this.arr[this.index1].data.time_id;
+              formData = {
+                result_name: this.save.result_name,
+                result_detail: this.save.result_detail,
+                hour: this.save.hour,
+                time_detail: this.save.time_detail,
+                type_id: this.save.type_id,
+                refer: this.refer[0],
+                task_name: this.tasks.task_name,
+              }
             }
+            if (this.save.flag === 0) flag = 0;//新增
+            //编辑
+            if (this.save.flag === -1) {
+              flag = 1;
+              if (this.refer.length !== 0 && !this.isString(this.refer[0])) {
+                formData.append('result_id', this.arr[this.index1].data.result_id);
+                formData.append('time_id', this.arr[this.index1].data.time_id);
+              } else {
+                formData.result_id = this.arr[this.index1].data.result_id;
+                formData.time_id = this.arr[this.index1].data.time_id;
+              }
+            }
+            this.arr[this.index1].data = formData;
+            this.arr[this.index1].flag = flag;
+            // console.log(this.arr[this.index1]);
+            this.save = [{
+              result_name: '',
+              result_detail: '',
+              hour: '',
+              type_id: '',
+              time_detail: '',
+              flag: 0,
+            }
+            ];
+            this.refer = [];
+            this.error1 = false;
+            this.check = true;
+            this.show1 = true;
+            this.show = false;
+          } else {
+            this.error1 = true;
           }
-          this.arr[this.index1].data = formData;
-          this.arr[this.index1].flag = flag;
-          console.log(this.arr[this.index1]);
-          this.save = [{
-            result_name: '',
-            result_detail: '',
-            hour: '',
-            type_id: '',
-            time_detail: '',
-            flag: 0,
-          }
-          ];
-          this.refer = [];
-          this.error1 = false;
-          this.check = true;
-          this.show1 = true;
-          this.show = false;
-        } else {
-          this.error1 = true;
-        }
+        })
       },
       removeresult(item) {
         const index = this.arr.indexOf(item);
@@ -601,7 +641,7 @@
             this.check = true;
             this.show1 = true;
             this.show = false;
-            console.log(this.delresult);
+            // console.log(this.delresult);
           }
           this.arr.splice(index, 1);
         }
@@ -615,6 +655,14 @@
       },
       isString: function (str) {
         return (typeof str == 'string') && str.constructor === String;
+      },
+      removeRefer(file, fileList) {
+        for (let a in this.refer) {
+          if (this.refer[a].name === file.name && this.refer[a].uid === file.uid) {
+            this.refer.splice(a, 1);
+          }
+        }
+        console.log(fileList);
       },
     }
   }
